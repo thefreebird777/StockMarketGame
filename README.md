@@ -16,7 +16,11 @@
 
  - Buy and Sell stocks
  
+ - Java Web Token
+ 
 ## BackEnd
+
+ - Encryption
 
  - Retrieve market data from API
  
