@@ -16,11 +16,11 @@
      
      - league admin functions
      
- - search for leagues/users (Jake)
+ - search for leagues/users
 
  - Dynamic updates
 
- - Account Management (Jake)
+ - Account Management
  
      - change password
      
@@ -46,7 +46,7 @@
 
  - Buy and Sell stocks
 
- - email notifications (Jake)
+ - email notifications
 
  - Dynamic Screen Size
  
@@ -56,12 +56,27 @@
 
  - Encryption
 
- - Retrieve market data from API
+ - Retrieve market data from API (https://www.alphavantage.co/)
  
- - archive transactions (Jake)
+ - archive transactions
  
- - maintain account balances (Jake)
+ - maintain account balances
  
- - store account info (Jake)
+ - store account info
  
- - store league info (Jake)
+ - store league info
+ 
+ 
+ 
+ 
+ ########################## API / Web Resources ##########################
+ 
+https://www.lucidchart.com/documents/edit/3bb008a4-461c-4dea-b5fc-9e719576a438#
+
+- Login/join activity diagrams: https://www.lucidchart.com/invitations/accept/c01af0c4-9e63-4737-b884-d3bc6eef37f0
+
+- Create League Diagram: https://www.lucidchart.com/invitations/accept/19cd83a1-4308-411f-8547-2e53ea45f23c
+
+http://editor.swagger.io/
+
+https://startbootstrap.com/
