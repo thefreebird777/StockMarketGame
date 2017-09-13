@@ -11,6 +11,10 @@
  - create/join leagues
  
      - starting money amount
+     
+     - league admin functions
+     
+ - search for leagues/users
 
  - Dynamic updates
 
