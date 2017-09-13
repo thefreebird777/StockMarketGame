@@ -16,11 +16,11 @@
      
      - league admin functions
      
- - search for leagues/users
+ - search for leagues/users (Jake)
 
  - Dynamic updates
 
- - Account Management
+ - Account Management (Jake)
  
      - change password
      
@@ -46,7 +46,7 @@
 
  - Buy and Sell stocks
 
- - email notifications
+ - email notifications (Jake)
 
  - Dynamic Screen Size
  
@@ -58,10 +58,10 @@
 
  - Retrieve market data from API
  
- - archive transactions
+ - archive transactions (Jake)
  
- - maintain account balances
+ - maintain account balances (Jake)
  
- - store account info
+ - store account info (Jake)
  
- - store league info
+ - store league info (Jake)
