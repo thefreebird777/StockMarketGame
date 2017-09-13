@@ -6,6 +6,8 @@
  
  - login/log out
  
+     - password reset
+ 
  - online status
  
  - create/join leagues
@@ -19,6 +21,10 @@
  - Dynamic updates
 
  - Account Management
+ 
+     - change password
+     
+     - manage leagues
 
  - Porfolio Management
   
