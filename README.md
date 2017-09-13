@@ -77,6 +77,8 @@ https://www.lucidchart.com/documents/edit/3bb008a4-461c-4dea-b5fc-9e719576a438#
 
 - Create League Diagram: https://www.lucidchart.com/invitations/accept/19cd83a1-4308-411f-8547-2e53ea45f23c
 
+- Sequence Diagram: https://www.lucidchart.com/invitations/accept/6c641a26-da74-41b0-b7a4-9b490a501e6c
+
 http://editor.swagger.io/
 
 https://startbootstrap.com/
