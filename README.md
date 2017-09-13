@@ -16,6 +16,8 @@
 
  - Buy and Sell stocks
  
+ - Dynamic Screen Size
+ 
  - Java Web Token
  
 ## BackEnd
