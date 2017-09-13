@@ -56,7 +56,7 @@
 
  - Encryption
 
- - Retrieve market data from API
+ - Retrieve market data from API (https://www.alphavantage.co/)
  
  - archive transactions
  
@@ -65,3 +65,14 @@
  - store account info
  
  - store league info
+ 
+ 
+ 
+ 
+ ########################## API / Web Resources ##########################
+ 
+https://www.lucidchart.com/documents/edit/3bb008a4-461c-4dea-b5fc-9e719576a438#
+
+http://editor.swagger.io/
+
+https://startbootstrap.com/
