@@ -56,7 +56,7 @@
 
  - Encryption
 
- - Retrieve market data from API
+ - Retrieve market data from API (https://www.alphavantage.co/)
  
  - archive transactions
  
