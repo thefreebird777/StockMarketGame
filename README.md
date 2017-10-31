@@ -56,7 +56,7 @@
 
  - Encryption
 
- - Retrieve market data from API (https://www.alphavantage.co/)
+ - Retrieve market data from API (https://www.alphavantage.co/) key: T43MK3VWRNJ7TNH8
  
  - archive transactions
  
