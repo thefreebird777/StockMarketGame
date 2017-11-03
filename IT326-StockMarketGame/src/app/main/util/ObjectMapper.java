@@ -2,10 +2,6 @@ package app.main.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import app.main.exceptions.APIException;
 import app.main.model.Account;
 import app.main.model.League;
@@ -21,17 +17,18 @@ public class ObjectMapper {
 	 * @throws - APIException
 	 */
 	public static synchronized User mapUser(ResultSet rs) throws APIException {		
+		User user = null;
+		
 		try {
-			User user = new User();	
+			user = new User();	
 			user.setEmail(rs.getString("EMAIL"));
+			user.setPassword(rs.getString("PASSWORD"));
 			user.setFirstName(rs.getString("FNAME"));
 			user.setLastName(rs.getString("LNAME"));
-			user.setAdmin(rs.getBoolean("ADMIN"));
-			List<String> accountList = new ArrayList<String>(Arrays.asList(rs.getString("ACCOUNTS").split(",")));
-			List<String> leagueList = new ArrayList<String>(Arrays.asList(rs.getString("LEAGUES").split(",")));			
-			//set league list
-			//set account list
-			
+			user.setLeagueID(rs.getString("LEAGUE_ID"));
+			user.setAccountID(rs.getString("ACCT_ID"));
+			user.setFunds(Double.parseDouble(rs.getString("FUNDS")));
+			rs.close();
 			return user;
 		} catch (SQLException sqlEx) {
 			throw new APIException(500, sqlEx.getMessage());
@@ -47,15 +44,25 @@ public class ObjectMapper {
 	 * @throws - APIException
 	 */
 	public static synchronized League mapLeague(ResultSet rs) throws APIException {
+		League league = null;
+		String userEmail, adminEmail;
+		
 		try {
-			League league = new League();	
+			league = new League();	
 			league.setLeagueID(rs.getString("LEAGUE_ID"));
 			league.setName(rs.getString("NAME"));									
-			List<String> userList = new ArrayList<String>(Arrays.asList(rs.getString("USERS").split(",")));
-			List<String> adminList = new ArrayList<String>(Arrays.asList(rs.getString("ADMINS").split(",")));
-			//set user list
-			//set admin list
-			
+
+			while(rs.next()) {
+				userEmail = rs.getString("USER_EMAIL");
+				adminEmail = rs.getString("ADMIN_EMAIL");
+				
+				if(!userEmail.equals(null) && !userEmail.equals("")) 
+					league.getUserList().add(userEmail);
+				
+				if(!adminEmail.equals(null) && !adminEmail.equals(""))
+					league.getAdminList().add(adminEmail);					
+			}
+			rs.close();
 			return league;
 		} catch (SQLException sqlEx) {
 			throw new APIException(500, sqlEx.getMessage());
@@ -71,16 +78,24 @@ public class ObjectMapper {
 	 * @throws - APIException
 	 */
 	public static synchronized Account mapAccount(ResultSet rs) throws APIException {
+		Account account;
+		String ticker, value;
+		
 		try {
-			Account account = new Account();	
+			account = new Account();	
 			account.setAcctId(rs.getString("ACCT_ID"));
-			account.setOwnerEmail(rs.getString("EMAIL"));
-			account.setLeagueID(rs.getString("LEAGUE_ATTACHED"));
-			account.setValue(Double.parseDouble(rs.getString("VALUE")));
-			List<String> portfolio = new ArrayList<String>(Arrays.asList(rs.getString("STOCKS").split(",")));			
-			//set account list			
-			
-			
+
+			while(rs.next()) {
+				ticker = rs.getString("TICKER");
+				value = rs.getString("VALUE");
+				
+				if(!ticker.equals(null) && !ticker.equals("")) 
+					account.getTickerList().add(ticker);
+				
+				if(!value.equals(null) && !value.equals(""))
+					account.getValueList().add(Double.parseDouble(value));					
+			}			
+			rs.close();
 			return account;
 		} catch (SQLException sqlEx) {
 			throw new APIException(500, sqlEx.getMessage());
@@ -100,6 +115,7 @@ public class ObjectMapper {
 			Stock stock = new Stock();	
 			stock.setName(rs.getString("TICKER"));
 			stock.setValue(Double.parseDouble(rs.getString("VALUE")));
+			rs.close();
 			return stock;
 		} catch (SQLException sqlEx) {
 			throw new APIException(500, sqlEx.getMessage());

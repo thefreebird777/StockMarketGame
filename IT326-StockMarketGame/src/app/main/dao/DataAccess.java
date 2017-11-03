@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -21,11 +22,11 @@ import app.main.model.Stock;
 import app.main.model.User;
 import app.main.util.ObjectMapper;
 
-public class DataAccess implements SQLSelect {
+public class DataAccess implements SQLOperations {
 	
 	private static Properties properties;
 	private static BasicDataSource dataSource;
-	private static Map<String, String> dbTableTemplates;	
+	private static Map<String, String> dbTableTemplates = new HashMap<String, String>();	
 	private static final Logger LOGGER = Logger.getLogger(DataAccess.class.getName());
 	
 	/**
@@ -36,10 +37,11 @@ public class DataAccess implements SQLSelect {
 		this.initProperties();
 		this.createClientPool("admin", "admin", "jdbc:derby:C:\\Users\\rdevi\\MyDB;create=true");
 		
-		dbTableTemplates = new HashMap<String, String>();
-		dbTableTemplates.put("USER", "(EMAIL, FIRST_NAME, LAST_NAME, LEAGUE, ACCOUNT)");
-		dbTableTemplates.put("LEAGUE", "(LEAGUE_ID, NAME, USERS, ADMIN)");
-		dbTableTemplates.put("ACCOUNT", "(ACCT_ID, EMAIL, LEAGUE_ATTACHED, STOCKS, VALUE)");
+		//Initializes db template map with table columns
+		dbTableTemplates.put("USER", "(EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, LEAGUE_ID, ACCOUNT_ID, FUNDS)");
+		dbTableTemplates.put("LEAGUE", "(LEAGUE_ID, NAME, USER_TABLE_ID, ADMIN_TABLE_ID)");
+		dbTableTemplates.put("LEAGUE_USERS", "(LEAGUE_ID, USER_EMAIL, ADMIN)");
+		dbTableTemplates.put("ACCOUNT", "(ACCT_ID, TICKER, VALUE)");
 		dbTableTemplates.put("STOCK", "(TICKER, VALUE)");
 	}
 	
@@ -50,7 +52,7 @@ public class DataAccess implements SQLSelect {
 	 * @throws APIException
 	 */
 	@Override
-	public synchronized User fetchUser(String email) throws APIException {
+	public User fetchUser(String email) throws APIException {
 		PreparedStatement pStmnt = null;
 		User user = null;	
 		
@@ -78,7 +80,7 @@ public class DataAccess implements SQLSelect {
 	 * @throws APIException
 	 */
 	@Override
-	public synchronized League fetchLeague(String leagueID) throws APIException {
+	public League fetchLeague(String leagueID) throws APIException {
 		PreparedStatement pStmnt = null;
 		League league = null;
 		
@@ -107,7 +109,7 @@ public class DataAccess implements SQLSelect {
 	 * @throws APIException
 	 */
 	@Override
-	public synchronized Account fetchAccount(String acctID) throws APIException {
+	public Account fetchAccount(String acctID) throws APIException {
 		PreparedStatement pStmnt = null;
 		Account acct = null;
 		
@@ -136,7 +138,7 @@ public class DataAccess implements SQLSelect {
 	 * @throws APIException
 	 */
 	@Override
-	public synchronized Stock fetchStock(String ticker) throws APIException {
+	public Stock fetchStock(String ticker) throws APIException {
 		PreparedStatement pStmnt = null;
 		Stock stock = null;
 		
@@ -161,54 +163,85 @@ public class DataAccess implements SQLSelect {
 	//------------------------------  Additional SQL Methods  ------------------------------ 
 	
 	@Override
-	public synchronized void add(String[] var, String table) throws APIException {
+	public int add(String table, ArrayList<String> vars) throws APIException {
 		PreparedStatement pStmnt = null;
-		
+				
 		try {
 			String sql = "INSERT INTO ? " + dbTableTemplates.get(table) + " VALUES (";
-			
-			for(int i = 0; i < var.length; i++)
-				sql.concat((var[i] + ", "));
-			
+						
+			for(int i = 0; i < vars.size(); i++) {
+				sql.concat(vars.get(i) + ", ");
+			}			
 			sql.concat(")");
+			
 			pStmnt = getConnection().prepareStatement(sql);
 			pStmnt.setString(1, table);			
 			pStmnt.executeQuery();
+			return 200;
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 			throw new APIException(500, e.getMessage());
 		}
 	}
-
+	
 	@Override
-	public synchronized void remove(String[] var, String table) throws APIException {
+	public int update(String table, String valColumn, String val, String column, String location) 
+			throws APIException {
+		
+		PreparedStatement pStmnt = null;
+		String sql = "UPDATE ? SET ? = ? WHERE ? = ?";
+		
+		try {
+			pStmnt = getConnection().prepareStatement(sql);
+			pStmnt.setString(1, table);
+			pStmnt.setString(2, valColumn);
+			pStmnt.setString(3, val);
+			pStmnt.setString(4, column);
+			pStmnt.setString(5, location);
+			pStmnt.executeQuery();
+			return 200;
+		} catch(Exception e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new APIException(500, e.getMessage());
+		}
+	}
+	
+	@Override
+	public int updateAdvanced(String table, String valColumn, String val, String column1, 
+			String location1, String column2, String location2) throws APIException {		
+		
+		PreparedStatement pStmnt = null;
+		String sql = "UPDATE ? SET ? = ? WHERE ? = ? AND ? = ?";
+		
+		try {
+			pStmnt = getConnection().prepareStatement(sql);
+			pStmnt.setString(1, table);
+			pStmnt.setString(2, valColumn);
+			pStmnt.setString(3, val);
+			pStmnt.setString(4, column1);
+			pStmnt.setString(5, location1);
+			pStmnt.setString(6, column2);
+			pStmnt.setString(7, location2);
+			pStmnt.executeQuery();
+			return 200;
+		} catch(Exception e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new APIException(500, e.getMessage());
+		}
+	}
+	
+	@Override
+	public int remove(String table, String column, String location) throws APIException {
 		PreparedStatement pStmnt = null;
 		String sql = "DELETE FROM ? WHERE ? = ?";
 		
-		try {
+		try {						
 			pStmnt = getConnection().prepareStatement(sql);
 			pStmnt.setString(1, table);
-			pStmnt.setString(2, var[0]);
-			pStmnt.setString(3, var[1]);
+			pStmnt.setString(2, column);
+			pStmnt.setString(3, location);
 			pStmnt.executeQuery();
-		} catch(Exception e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			throw new APIException(500, e.getMessage());
-		}
-	}
-
-	@Override
-	public synchronized void update(String[] var, String table) throws APIException {
-		PreparedStatement pStmnt = null;
-		String sql = "UPDATE ? SET ? WHERE ? = ?";
-		
-		try {
-			pStmnt = getConnection().prepareStatement(sql);
-			pStmnt.setString(1, table);
-			pStmnt.setString(2, var[0]);
-			pStmnt.setString(3, var[1]);
-			pStmnt.setString(4, var[2]);
-			pStmnt.executeQuery();
+			return 200;
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 			throw new APIException(500, e.getMessage());

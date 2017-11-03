@@ -1,23 +1,20 @@
 package app.main.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Account {
 	
 	private String acctId;
-	private String ownerEmail;
-	private String leagueID;
-	private HashMap<String, Stock> stockList;
-	private double value;
+	private String ticker;
+	private ArrayList<String> tickerList;
+	private ArrayList<Double> valueList;
 	
 	public String getAcctId() { return acctId; }
 	public void setAcctId(String acctId) { this.acctId = acctId; }
-	public String getOwnerEmail() {	return ownerEmail; }
-	public void setOwnerEmail(String ownerEmail) { this.ownerEmail = ownerEmail; }
-	public String getLeagueID() { return leagueID; }
-	public void setLeagueID(String leagueID) { this.leagueID = leagueID; }	
-	public HashMap<String, Stock> getStockList() { return stockList; }
-	public void setStockList(HashMap<String, Stock> stockList) { this.stockList = stockList; }
-	public double getValue() { return value; }
-	public void setValue(double value) { this.value = value; }	
+	public String getTicker() { return ticker; }
+	public void setTicker(String ticker) { this.ticker = ticker; }
+	public ArrayList<String> getTickerList() { return tickerList; }
+	public void setTickerList(ArrayList<String> tickerList) { this.tickerList = tickerList; }
+	public ArrayList<Double> getValueList() { return valueList; }
+	public void setValueList(ArrayList<Double> valueList) {	this.valueList = valueList;	}
 }
