@@ -52,9 +52,9 @@ public class DataAccess implements SQLOperations {
 	 * @throws APIException
 	 */
 	@Override
-	public User fetchUser(String email) throws APIException {
+	public User fetchUser(User user) throws APIException {
 		PreparedStatement pStmnt = null;
-		User user = null;	
+		User newUser = null;	
 		
 		try {
 			String sql = "SELECT * FROM USER WHERE EMAIL = ?";	
@@ -80,7 +80,7 @@ public class DataAccess implements SQLOperations {
 	 * @throws APIException
 	 */
 	@Override
-	public League fetchLeague(String leagueID) throws APIException {
+	public League fetchLeague(League league) throws APIException {
 		PreparedStatement pStmnt = null;
 		League league = null;
 		
@@ -109,7 +109,7 @@ public class DataAccess implements SQLOperations {
 	 * @throws APIException
 	 */
 	@Override
-	public Account fetchAccount(String acctID) throws APIException {
+	public Account fetchAccount(Account account) throws APIException {
 		PreparedStatement pStmnt = null;
 		Account acct = null;
 		
@@ -138,7 +138,7 @@ public class DataAccess implements SQLOperations {
 	 * @throws APIException
 	 */
 	@Override
-	public Stock fetchStock(String ticker) throws APIException {
+	public Stock fetchStock(Stock stock) throws APIException {
 		PreparedStatement pStmnt = null;
 		Stock stock = null;
 		
@@ -163,7 +163,7 @@ public class DataAccess implements SQLOperations {
 	//------------------------------  Additional SQL Methods  ------------------------------ 
 	
 	@Override
-	public int add(String table, ArrayList<String> vars) throws APIException {
+	public int insert(String table, ArrayList<String> vars) throws APIException {
 		PreparedStatement pStmnt = null;
 				
 		try {
