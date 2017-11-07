@@ -13,6 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/rdevi/Downloads/commons-dbcp-1.4-bin.zip"/>
+	<classpathentry kind="lib" path="C:/Users/rdevi/Documents/GitHub/StockMarketGame/Resources/commons-dbcp-1.4-bin.zip"/>
+	<classpathentry kind="lib" path="C:/Users/rdevi/Documents/GitHub/StockMarketGame/Resources/gson-2.6.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
