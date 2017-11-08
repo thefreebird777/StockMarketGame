@@ -11,8 +11,8 @@ public class UpdateService {
 		initMarketTable();
 	}
 	
-	public void updateTable() {
-		
+	public void updateTable(String[] jsons) {
+
 	}
 	
 	public void updateStock(String ticker, double value) {
@@ -20,6 +20,6 @@ public class UpdateService {
 	}
 	
 	private void initMarketTable() {
-		
+		marketTable.put("MSFT", 0.00);
 	}
 }

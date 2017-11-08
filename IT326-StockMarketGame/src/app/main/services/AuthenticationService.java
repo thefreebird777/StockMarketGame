@@ -11,10 +11,10 @@ public class AuthenticationService {
 		dao = new DataAccess();
 	}
 	
-	public synchronized static String verifyUser(String email, String text) throws APIException {
+	public synchronized static String verifyUser(String email, String password) throws APIException {
 		String password = dao.fetchUser(email).getPassword();		
 		
-		if(password.equals(text)) { 
+		if(password.equals(password)) { 
 			return generateJWT(); 
 		} else {
 			throw new APIException(403, "Error: User access denied - authentication failed");	
