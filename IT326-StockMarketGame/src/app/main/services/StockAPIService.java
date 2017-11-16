@@ -17,9 +17,9 @@ public class StockAPIService {
     private String QUERY = "/query?function=TIME_SERIES_INTRADAY&symbol=";
     private StockService STOCK_SERVICE = new StockService();
     private ArrayList<String> tickerList;
-    ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
 
-    public void run(){
+    public void running(){
         exec.scheduleAtFixedRate(runnable , 0, 15, TimeUnit.MINUTES);
     }
 
