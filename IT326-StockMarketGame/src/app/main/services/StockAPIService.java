@@ -6,6 +6,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class StockAPIService {
 
@@ -14,6 +17,11 @@ public class StockAPIService {
     private String QUERY = "/query?function=TIME_SERIES_INTRADAY&symbol=";
     private StockService STOCK_SERVICE = new StockService();
     private ArrayList<String> tickerList;
+    ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
+
+    public void run(){
+        exec.scheduleAtFixedRate(runnable , 0, 15, TimeUnit.MINUTES);
+    }
 
     public HttpEntity getData(String symbol){
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -30,12 +38,22 @@ public class StockAPIService {
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
-
         return entity;
     }
 
-    private int updateStocks(){
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            updateStocks();
+        }
+    };
 
+    private int updateStocks(){
+        for (int i = 0; i < tickerList.size(); i++)
+        {
+            getData(tickerList.get(i));
+            //TODO
+        }
         return 0;
     }
 }
