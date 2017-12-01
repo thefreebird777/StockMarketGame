@@ -1,4 +1,4 @@
-package app.main.services;
+package app.services;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
