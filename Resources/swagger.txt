@@ -307,6 +307,43 @@ paths:
           description: "Internal server error"
           schema:
             $ref: "#/definitions/Response" 
+    put:
+      tags:
+      - "league"
+      summary: "Update league info"
+      consumes: 
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "leagueID"
+        description: "League's ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "JSON league object with updated info (i.e. name)"
+        required: true
+        schema:
+          $ref: '#/definitions/League'
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid query params entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "League not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
 
   /stock/action:
     get:
