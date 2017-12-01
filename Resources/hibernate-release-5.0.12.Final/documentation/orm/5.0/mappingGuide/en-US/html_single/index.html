@@ -1,0 +1,2898 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Hibernate Domain Model Mapping Guide</title><link rel="stylesheet" type="text/css" href="css/hibernate-single.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><div class="book" title="Hibernate Domain Model Mapping Guide"><div class="titlepage"><div><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><div><h1 class="title"><a id="d5e1"/>Hibernate Domain Model Mapping Guide</h1></div><div><h2 class="subtitle">Hibernate - Relational Persistence for Idiomatic Java</h2></div><div><div class="authorgroup">
+            <div class="author"><h3 class="author">
+                <span class="orgname"><a class="ulink" href="http://hibernate.org">The Hibernate Team</a></span>
+            </h3></div>
+            <div class="othercredit"><h3 class="othercredit">
+                <span class="orgname"><a class="ulink" href="http://design.jboss.org/">The JBoss Visual Design Team</a></span>
+            </h3></div>
+        </div></div><div><p class="releaseinfo">5.0.12.Final</p></div><div><p class="copyright">Copyright © 2011 Red Hat, Inc.</p></div><div><p class="pubdate">2017-01-19</p></div></div><hr/></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="preface"><a href="#d5e24">Preface</a></span></dt><dt><span class="chapter"><a href="#categorization">1. Data categorizations</a></span></dt><dd><dl><dt><span class="section"><a href="#categorization-value">1.1. Value types</a></span></dt><dt><span class="section"><a href="#categorization-entity">1.2. Entity Types</a></span></dt><dt><span class="section"><a href="#categorization-significance">1.3. Significance of type categories</a></span></dt></dl></dd><dt><span class="chapter"><a href="#entity">2. Entity</a></span></dt><dd><dl><dt><span class="section"><a href="#entity-pojo">2.1. POJO Models</a></span></dt><dd><dl><dt><span class="section"><a href="#entity-pojo-final">2.1.1. Prefer non-final classes</a></span></dt><dt><span class="section"><a href="#entity-pojo-constructor">2.1.2. Implement a no-argument constructor</a></span></dt><dt><span class="section"><a href="#domainmodel-pojo-accessors">2.1.3. Declare getters and setters for persistent attributes</a></span></dt><dt><span class="section"><a href="#entity-pojo-identifier">2.1.4. Provide identifier attribute(s)</a></span></dt><dt><span class="section"><a href="#entity-pojo-mapping">2.1.5. Mapping the entity</a></span></dt><dt><span class="section"><a href="#entity-pojo-optlock">2.1.6. Mapping optimistic locking</a></span></dt><dt><span class="section"><a href="#entity-pojo-inheritance">2.1.7. Inheritance</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#basic">3. Basic Types</a></span></dt><dd><dl><dt><span class="section"><a href="#basic-provided">3.1. Hibernate-provided BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-annotation">3.2. The <code class="literal">@Basic</code> annotation</a></span></dt><dt><span class="section"><a href="#d5e555">3.3. The <code class="literal">@Column</code> annotation</a></span></dt><dt><span class="section"><a href="#basic-registry">3.4. BasicTypeRegistry</a></span></dt><dt><span class="section"><a href="#basic-explicit">3.5. Explicit BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-custom">3.6. Custom BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-enums">3.7. Mapping enums</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e637">3.7.1. @Enumerated</a></span></dt><dt><span class="section"><a href="#d5e678">3.7.2. AttributeConverter</a></span></dt><dt><span class="section"><a href="#d5e702">3.7.3. Custom type</a></span></dt></dl></dd><dt><span class="section"><a href="#basic-lob">3.8. Mapping LOBs</a></span></dt><dt><span class="section"><a href="#basic-nationalized">3.9. Mapping Nationalized Character Data</a></span></dt><dt><span class="section"><a href="#basic-uuid">3.10. Mapping UUID Values</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e806">3.10.1. UUID as binary</a></span></dt><dt><span class="section"><a href="#d5e810">3.10.2. UUID as (var)char</a></span></dt><dt><span class="section"><a href="#d5e813">3.10.3. PostgeSQL-specific UUID</a></span></dt><dt><span class="section"><a href="#d5e819">3.10.4. UUID as identifier</a></span></dt></dl></dd><dt><span class="section"><a href="#basic-datetime">3.11. Mapping Date/Time Values</a></span></dt><dt><span class="section"><a href="#basic-jpaconvert">3.12. JPA 2.1 AttributeConverters</a></span></dt></dl></dd><dt><span class="chapter"><a href="#composition">4. Compositions</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e852">4.1. Component / Embedded</a></span></dt><dt><span class="section"><a href="#composition-multiple">4.2. Multiple compositions</a></span></dt><dd><dl><dt><span class="section"><a href="#composition-multiple-jpa">4.2.1. JPA's AttributeOverride</a></span></dt><dt><span class="section"><a href="#composition-multiple-namingstrategy">4.2.2. ImplicitNamingStrategy</a></span></dt></dl></dd><dt><span class="section"><a href="#composition-collections">4.3. Collections of compositions</a></span></dt><dt><span class="section"><a href="#composition-mapkey">4.4. Compositions as Map key</a></span></dt><dt><span class="section"><a href="#composition-identifier">4.5. Compositions as identifiers</a></span></dt></dl></dd><dt><span class="chapter"><a href="#collections">5. Collections</a></span></dt><dd><dl><dt><span class="section"><a href="#collections-synopsis">5.1. Collections as a value type</a></span></dt><dt><span class="section"><a href="#collections-value">5.2. Collections of value types</a></span></dt><dt><span class="section"><a href="#collections-entity">5.3. Collections of entities</a></span></dt><dt><span class="section"><a href="#collections-list">5.4. List - index</a></span></dt><dt><span class="section"><a href="#collections-map">5.5. Map - key</a></span></dt><dt><span class="section"><a href="#collections-bag">5.6. Bags</a></span></dt><dt><span class="section"><a href="#collections-array">5.7. Arrays</a></span></dt><dt><span class="section"><a href="#collections-as-basic">5.8. Collections as basic value type</a></span></dt></dl></dd><dt><span class="chapter"><a href="#identifiers">6. Identifiers</a></span></dt><dd><dl><dt><span class="section"><a href="#identifiers-simple">6.1. Simple identifiers</a></span></dt><dt><span class="section"><a href="#identifiers-composite">6.2. Composite identifiers</a></span></dt><dd><dl><dt><span class="section"><a href="#identifiers-composite-aggregated">6.2.1. Composite identifiers - aggregated (EmbeddedId)</a></span></dt><dt><span class="section"><a href="#identifiers-composite-nonaggregated">6.2.2. Composite identifiers - non-aggregated (IdClass)</a></span></dt></dl></dd><dt><span class="section"><a href="#identifiers-generators">6.3. Generated identifier values</a></span></dt><dd><dl><dt><span class="section"><a href="#identifiers-generators-auto">6.3.1. Interpreting AUTO</a></span></dt><dt><span class="section"><a href="#identifiers-generators-sequence">6.3.2. Using sequences</a></span></dt><dt><span class="section"><a href="#identifiers-generators-identity">6.3.3. Using IDENTITY columns</a></span></dt><dt><span class="section"><a href="#identifiers-generators-table">6.3.4. Using identifier table</a></span></dt><dt><span class="section"><a href="#identifiers-generators-uuid">6.3.5. Using UUID generation</a></span></dt><dt><span class="section"><a href="#identifiers-generators-generic">6.3.6. Using @GenericGenerator</a></span></dt><dt><span class="section"><a href="#identifiers-generators-optimizer">6.3.7. Optimizers</a></span></dt></dl></dd><dt><span class="section"><a href="#identifiers-derived">6.4. Derived Identifiers</a></span></dt></dl></dd><dt><span class="chapter"><a href="#naturalid">7. Natural Ids</a></span></dt><dd><dl><dt><span class="section"><a href="#naturalid-mapping">7.1. Natural Id Mapping</a></span></dt><dt><span class="section"><a href="#naturalid-api">7.2. Natural Id API</a></span></dt><dt><span class="section"><a href="#naturalid-mutability-caching">7.3. Natural Id - Mutability and Caching</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><strong>List of Tables</strong></p><dl><dt>3.1. <a href="#d5e216">Standard BasicTypes</a></dt><dt>3.2. <a href="#d5e451">BasicTypes added by hibernate-java8</a></dt></dl></div><div class="list-of-examples"><p><strong>List of Examples</strong></p><dl><dt>1.1. <a href="#d5e40">Simple table and domain model</a></dt><dt>2.1. <a href="#d5e157">Simple @Entity</a></dt><dt>2.2. <a href="#d5e162">Simple @Entity with @Table</a></dt><dt>2.3. <a href="#d5e180">Version</a></dt><dt>3.1. <a href="#d5e514">With <code class="literal">@Basic</code></a></dt><dt>3.2. <a href="#d5e518">Without <code class="literal">@Basic</code></a></dt><dt>3.3. <a href="#d5e561">Explicit column naming</a></dt><dt>3.4. <a href="#d5e599">Using @org.hibernate.annotations.Type</a></dt><dt>3.5. <a href="#d5e623">Custom BasicType implementation</a></dt><dt>3.6. <a href="#d5e628">Custom UserType implementation</a></dt><dt>3.7. <a href="#d5e650">@Enumerated(ORDINAL) example</a></dt><dt>3.8. <a href="#d5e664">@Enumerated(STRING) example</a></dt><dt>3.9. <a href="#d5e683">Enum mapping with AttributeConverter example</a></dt><dt>3.10. <a href="#d5e707">Enum mapping with custom Type example</a></dt><dt>3.11. <a href="#d5e744">CLOB - SQL</a></dt><dt>3.12. <a href="#d5e748">CLOB - locator mapping</a></dt><dt>3.13. <a href="#d5e752">CLOB - materialized mapping</a></dt><dt>3.14. <a href="#d5e758">CLOB - materialized char[] mapping</a></dt><dt>3.15. <a href="#d5e762">BLOB - SQL</a></dt><dt>3.16. <a href="#d5e766">BLOB - locator mapping</a></dt><dt>3.17. <a href="#d5e770">BLOB - materialized mapping</a></dt><dt>3.18. <a href="#d5e788">NVARCHAR mapping</a></dt><dt>3.19. <a href="#d5e791">NCLOB (locator) mapping</a></dt><dt>3.20. <a href="#d5e794">NCLOB (materialized) mapping</a></dt><dt>4.1. <a href="#composition-ex-embeddable">Simple composition example</a></dt><dt>4.2. <a href="#composition-ex-embedded1">Simple Embedded</a></dt><dt>4.3. <a href="#composition-ex-embedded1-sql">Person table</a></dt><dt>4.4. <a href="#composition-ex-no-composition">Alternative to composition</a></dt><dt>4.5. <a href="#composition-ex-multiple-compositions">Multiple compositions</a></dt><dt>4.6. <a href="#d5e879">JPA's AttributeOverride</a></dt><dt>4.7. <a href="#d5e890">Enabling composition-safe implicit naming</a></dt><dt>4.8. <a href="#d5e894">Enabling composition-safe implicit naming</a></dt><dt>5.1. <a href="#d5e943">Delimited set of tags</a></dt><dt>6.1. <a href="#d5e992">Simple assigned identifier</a></dt><dt>6.2. <a href="#d5e997">Simple generated identifier</a></dt><dt>6.3. <a href="#d5e1026">Basic EmbeddedId</a></dt><dt>6.4. <a href="#d5e1030">EmbeddedId with ManyToOne</a></dt><dt>6.5. <a href="#d5e1039">Basic IdClass</a></dt><dt>6.6. <a href="#d5e1043">IdClass with ManyToOne</a></dt><dt>6.7. <a href="#d5e1047">IdClass with partial generation</a></dt><dt>6.8. <a href="#d5e1116">Unnamed sequence</a></dt><dt>6.9. <a href="#d5e1120">Named sequence</a></dt><dt>6.10. <a href="#d5e1125">Configured sequence</a></dt><dt>6.11. <a href="#d5e1148">Table generator table structure</a></dt><dt>6.12. <a href="#d5e1153">Unnamed table generator</a></dt><dt>6.13. <a href="#d5e1166">Implicitly using the random UUID strategy</a></dt><dt>6.14. <a href="#d5e1171">Implicitly using the random UUID strategy</a></dt><dt>7.1. <a href="#d5e1211">Natural id using single basic attribute</a></dt><dt>7.2. <a href="#d5e1214">Natural id using single embedded attribute</a></dt><dt>7.3. <a href="#d5e1217">Natural id using multiple persistent attributes</a></dt><dt>7.4. <a href="#d5e1225">Using NaturalIdLoadAccess</a></dt><dt>7.5. <a href="#d5e1242">Using SimpleNaturalIdLoadAccess</a></dt><dt>7.6. <a href="#d5e1256">Mutable natural id</a></dt><dt>7.7. <a href="#d5e1264">Mutable natural id synchronization use-case</a></dt><dt>7.8. <a href="#d5e1268">Natural id caching</a></dt></dl></div>
+    
+
+
+    <div class="preface" title="Preface"><div class="titlepage"><div><div><h2 class="title"><a id="d5e24"/>Preface</h2></div></div></div>
+    
+
+    <p>
+        The goal of this document is to discuss how to map an application's domain model to a relational
+        database.
+    </p>
+
+    <p>
+        Historically applications using Hibernate would have used its proprietary XML mapping file format for
+        this purpose.  With the coming of JPA, most of this information is now defined in a way that is portable
+        across ORM/JPA providers using annotations (and/or standardized XML format).  This document will focus on
+        JPA mapping where possible.  For Hibernate mapping features not supported by JPA we will prefer Hibernate
+        extension annotations, again where possible.
+    </p>
+
+</div>
+
+    <div class="chapter" title="Chapter 1. Data categorizations"><div class="titlepage"><div><div><h2 class="title"><a id="categorization"/>Chapter 1. Data categorizations</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#categorization-value">1.1. Value types</a></span></dt><dt><span class="section"><a href="#categorization-entity">1.2. Entity Types</a></span></dt><dt><span class="section"><a href="#categorization-significance">1.3. Significance of type categories</a></span></dt></dl></div>
+    
+
+    
+
+    <p>
+        Before diving into the actual topics of how to map different categories of things in your domain mode
+        it helps to understand what those categories are.  Hibernate and JPA both express these categorizations.
+    </p>
+
+    <p>
+        Hibernate understands both the Java and JDBC representations of application data.  The ability to read and write
+        the this data to/from the database is the function of a Hibernate <em class="firstterm">type</em>.  A type, in this usage,
+        is an implementation of the <code class="interfacename">org.hibernate.type.Type</code> interface.  This Hibernate
+        type also describes various aspects of behavior of the Java type such as how to check for equality, how to
+        clone values, etc.
+    </p>
+
+    <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Usage of the word <em class="wordasword">type</em></h2>
+        
+        <p>
+            The Hibernate type is neither a Java type nor a SQL datatype.   It provides information about both of these
+            as well as understanding marshalling between.
+        </p>
+        <p>
+            When you encounter the term type in discussions of Hibernate, it may refer to the Java type, the JDBC type,
+            or the Hibernate type, depending on context.
+        </p>
+    </div>
+
+    <p>
+        To help understand these categorizations, lets look at a simple table and domain model that we wish to map.
+    </p>
+
+    <div class="example"><a id="d5e40"/><p class="title"><strong>Example 1.1. Simple table and domain model</strong></p><div class="example-contents">
+        
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table Contact (
+	id INTEGER NOT NULL,
+	first_name VARCHAR,
+	middle_name VARCHAR,
+	last_name VARCHAR,
+	notes VARCHAR,
+	starred BIT,
+	website VARCHAR
+)</pre>
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class Contact {
+	private Integer id;
+	private Name name;
+	private String notes;
+	private URL website;
+	private boolean starred;
+	// getters and setters ommitted
+}
+
+public class Name {
+	private String first;
+	private String middle;
+	private String last;
+	// getters and setters ommitted
+}
+</pre>
+    </div></div><br class="example-break"/>
+
+    <p>
+        In the broadest sense, Hibernate categorizes types into two groups:
+        </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">Value types (<a class="xref" href="#categorization-value" title="1.1. Value types">Section 1.1, “Value types”</a>)</li><li class="listitem">Entity types (<a class="xref" href="#categorization-entity" title="1.2. Entity Types">Section 1.2, “Entity Types”</a>)</li></ul></div><p>
+    </p>
+
+    <div class="section" title="1.1. Value types"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-value"/>1.1. Value types</h2></div></div></div>
+        
+
+        <p>
+            A value type is a piece of data that does not define its own lifecycle. It is,
+            in effect, owned by an entity, which defines its lifecycle.
+        </p>
+
+        <p>
+            Looked at another way, all the state of an entity is made up entirely of value types.  These
+            state fields or JavaBean-properties are termed <em class="firstterm">persistent attributes</em>.
+            The persistent attributes of the Contact class are value types.
+        </p>
+
+        <p>
+            Value types are further classified into three sub-categories;
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    Basic types - In mapping the Contact table, all attributes except for name would be basic
+                    types.  Basic types are discussed in detail in <a class="xref" href="#basic" title="Chapter 3. Basic Types">Chapter 3, <em>Basic Types</em></a>
+                </li><li class="listitem">
+                    Composite (or Embeddable) types - the name attribute is an example of a composite type, which is
+                    discussed in details in <a class="xref" href="#">???</a>
+                </li><li class="listitem">
+                    Collection types - the example has no collections.  Collection types are
+                    discussed in <span style="color: red">&lt;ref&gt;&lt;/ref&gt;</span>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="1.2. Entity Types"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-entity"/>1.2. Entity Types</h2></div></div></div>
+        
+
+        <p>
+            Entities are application-specific classes which correlate to rows in a table, using a unique identifier.
+            Because of the requirement for a unique identifier, entities exist independently and define their own
+            lifecycle.  The Contact class itself would be an example of an entity.
+        </p>
+
+        <p>
+            Mapping entities is discussed in detail in <a class="xref" href="#entity" title="Chapter 2. Entity">Chapter 2, <em>Entity</em></a>.
+        </p>
+    </div>
+
+    <div class="section" title="1.3. Significance of type categories"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-significance"/>1.3. Significance of type categories</h2></div></div></div>
+        
+        <p>
+            Why do we spend so much time categorizing the various types of types?  What is the significance of the
+            distinction?
+        </p>
+        <p>
+            The main categorization was between entity types and value types.  To review we said that entities, by
+            nature of their unique identifier, exist independently of other objects whereas values do not.  An
+            application cannot "delete" the Contact website; instead, the website is removed when the Contact itself is
+            deleted (obviously you can <span class="emphasis"><em>update</em></span> the website of that website to null to make it
+            "go away", but even there the access is done through the website).
+        </p>
+        <p>
+            Nor can you define an association <span class="emphasis"><em>to</em></span> that Contact website.  You <span class="emphasis"><em>can</em></span>
+            define an association to Contact <span class="emphasis"><em>based on</em></span> its website (assuming website is unique),
+            but that is totally different.
+        </p>
+        <p>
+            equality
+        </p>
+        <p>
+            TBC...
+        </p>
+    </div>
+
+</div>
+    <div xml:lang="en" class="chapter" title="Chapter 2. Entity"><div class="titlepage"><div><div><h2 class="title"><a id="entity"/>Chapter 2. Entity</h2></div><div><div class="abstract" title="Abstract"><p class="title"><strong>Abstract</strong></p>
+            <p>Discuss mapping entities in the application domain model.</p>
+        </div></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#entity-pojo">2.1. POJO Models</a></span></dt><dd><dl><dt><span class="section"><a href="#entity-pojo-final">2.1.1. Prefer non-final classes</a></span></dt><dt><span class="section"><a href="#entity-pojo-constructor">2.1.2. Implement a no-argument constructor</a></span></dt><dt><span class="section"><a href="#domainmodel-pojo-accessors">2.1.3. Declare getters and setters for persistent attributes</a></span></dt><dt><span class="section"><a href="#entity-pojo-identifier">2.1.4. Provide identifier attribute(s)</a></span></dt><dt><span class="section"><a href="#entity-pojo-mapping">2.1.5. Mapping the entity</a></span></dt><dt><span class="section"><a href="#entity-pojo-optlock">2.1.6. Mapping optimistic locking</a></span></dt><dt><span class="section"><a href="#entity-pojo-inheritance">2.1.7. Inheritance</a></span></dt></dl></dd></dl></div>
+    
+
+    <div class="sidebar" title="Related Topics"><div class="titlepage"><div><div><p class="title"><strong>Related Topics</strong></p></div></div></div>
+        
+        <p>
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><a class="xref" href="#categorization" title="Chapter 1. Data categorizations">Chapter 1, <em>Data categorizations</em></a></p>
+                </li><li class="listitem">
+                    <p><a class="xref" href="#">???</a></p>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="2.1. POJO Models"><div class="titlepage"><div><div><h2 class="title"><a id="entity-pojo"/>2.1. POJO Models</h2></div></div></div>
+        
+
+        <p>
+            Section <em class="citetitle">2.1 The Entity Class</em> of the <em class="citetitle">JPA 2.1 specification</em>
+            defines its requirements for an entity class.  Applications that wish to remain portable across JPA providers
+            should adhere to these requirements.
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        The entity class must be annotated with the <code class="interfacename">javax.persistence.Entity</code>
+                        annotation (or be denoted as such in XML mapping)
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must have a public or protected no-argument constructor.  It may define
+                        additional constructors as well.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must be a top-level class.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        An enum or interface may not be designated as an entity.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must not be final.  No methods or persistent instance variables of the entity
+                        class may be final.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        If an entity instance is to be used remotely as a detached object, the entity class must
+                        implement the Serializable interface.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Both abstract and concrete classes can be entities.  Entities may extend non-entity classes as
+                        well as entity classes, and non-entity classes may extend entity classes.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The persistent state of an entity is represented by instance variables, which may correspond to
+                        JavaBean-style properties.  An instance variable must be directly accessed only from within the
+                        methods of the entity by the entity instance itself.  The state of the entity is available to
+                        clients only through the entity’s accessor methods (getter/setter methods) or other business
+                        methods.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Hibernate, however, is not as strict in its requirements.  The differences from the list above include:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        The entity class must have a no-argument constructor, which may be public, protected or package
+                        visibility.  It may define additional constructors as well.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class <span class="emphasis"><em>need not</em></span> be a top-level class.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Technically Hibernate can persist final classes or classes with final persistent state
+                        accessor (getter/setter) methods.  However, it is generally not a good idea as doing
+                        so will stop Hibernate from being able to generate proxies for lazy-loading the entity.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Hibernate does not really care if you expose direct access to your instance variables and
+                        use them from outside the entity itself.  The validity of such a paradigm, however, is debatable
+                        at best.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Let's look at each requirement in detail.
+        </p>
+
+        <div class="section" title="2.1.1. Prefer non-final classes"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-final"/>2.1.1. Prefer non-final classes</h3></div></div></div>
+            
+
+            <p>
+                This is a requirement for JPA.  It is more of a recommendation for Hibernate.
+            </p>
+
+            <p>
+                A central feature of Hibernate is the ability to lazy load an entity's data via runtime proxies.  This
+                feature depends upon the entity class being non-final or else implementing an interface that declares
+                all the attribute getters/setters.  You can still persist classes that are declared final and that do
+                not implement such an interface with Hibernate; you just will not be able to use proxies for lazy
+                association fetching which will ultimately limit your options for performance tuning.
+            </p>
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    Starting in 5.0 Hibernate offers a more robust version of bytecode enhancement as another means
+                    for handling lazy loading.  Hibernate had some bytecode re-writing capabilities prior to 5.0 but
+                    they were very rudimentary.
+                    
+                </p>
+            </div>
+
+            <p>
+                You should also avoid declaring persistent attribute getters and setters as final for the reasons
+                already mentioned.  And of course making the instance variable hold the entiy's persistent state would
+                just simply not make any sense.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.2. Implement a no-argument constructor"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-constructor"/>2.1.2. Implement a no-argument constructor</h3></div></div></div>
+            
+
+            <p>
+                The entity class should have a no-argument constructor.  Both Hibernate and JPA require this.
+            </p>
+
+            <p>
+                JPA requires that this constructor be defined as public or protected.  Hibernate for the most part does
+                note care about the visibility as long as the system's SecurityManager allows overriding the visibility.
+                That said, the constructor should be defined with at least package visibility if you wish to leverage
+                runtime proxy generation.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.3. Declare getters and setters for persistent attributes"><div class="titlepage"><div><div><h3 class="title"><a id="domainmodel-pojo-accessors"/>2.1.3. Declare getters and setters for persistent attributes</h3></div></div></div>
+            
+
+            <p>
+                Standard, portable JPA essentially requires this.  Otherwise your model would violate the requirement
+                quoted above in regards to accessing the entity persistent state fields directly from outside the
+                entity itself.
+            </p>
+
+            <p>
+                Although Hibernate does not require it, it is recommended to follow JavaBean conventions by defining
+                getters and setters for you entities persistent attributes.  You can still tell Hibernate to directly
+                access the entity's fields.
+            </p>
+
+            <p>
+                Attributes (whether fields or getters/setters) need not be declared public.  Hibernate can deal with
+                attributes declared with public, protected, package or private visibility.  Again, if wanting to use
+                runtime proxy generation for lazy loading the visibility for the getter/setter should be at least
+                package visibility.
+            </p>
+        </div>
+
+
+        <div class="section" title="2.1.4. Provide identifier attribute(s)"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-identifier"/>2.1.4. Provide identifier attribute(s)</h3></div></div></div>
+            
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    Historically this was considered optional.  However, not defining identifier attribute(s) on the
+                    entity should be considered a deprecated feature that will be removed in an upcoming release.
+                </p>
+            </div>
+
+            <p>
+                The identifier attribute does not necessarily need to be mapped to the column(s) that physically
+                define the primary key.  However, it should map to column(s) that can uniquely identify each row.
+            </p>
+
+            <p>
+                We recommend that you declare consistently-named identifier attributes on persistent classes and
+                that you use a nullable (i.e., non-primitive) type.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.5. Mapping the entity"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-mapping"/>2.1.5. Mapping the entity</h3></div></div></div>
+            
+
+            <p>
+                The main piece in mapping the entity is the <code class="interfacename">javax.persistence.Entity</code>
+                annotation.  The Entity annotation defines just one attribute <code class="methodname">name</code> which
+                is used to give the entity a specific name for use in JPQL queries; by default the name is the
+                unqualified name of the entity class.
+            </p>
+
+            <div class="example"><a id="d5e157"/><p class="title"><strong>Example 2.1. Simple @Entity</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Simple {
+	@Id
+	private Integer id;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                An entity models a database table.  The identifier uniquely identifies each row in that table.  By
+                default the name of the table is assumed to be the same as the name of the entity.  To explicitly
+                give the name of the table or to specify other information about the table, we would use the
+                <code class="interfacename">javax.persistence.Table</code> annotation.
+            </p>
+
+            <div class="example"><a id="d5e162"/><p class="title"><strong>Example 2.2. Simple @Entity with @Table</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@Table( catalog="CRM", schema="purchasing", name="t_simple" )
+public class Simple {
+	@Id
+	private Integer id;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                For details on mapping the identifier, see <a class="xref" href="#identifiers" title="Chapter 6. Identifiers">Chapter 6, <em>Identifiers</em></a>
+            </p>
+        </div>
+
+        <div class="section" title="2.1.6. Mapping optimistic locking"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-optlock"/>2.1.6. Mapping optimistic locking</h3></div></div></div>
+            
+
+            <p>
+                JPA defines support for optimistic locking based on either a version (sequential numeric) or timestamp
+                strategy.  To enable this style of optimistic locking simply add the
+                <code class="interfacename">javax.persistence.Version</code> to the persistent attribute that defines the
+                optimistic locking value.  According to JPA, the valid types for these attributes are limited to:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>int, or Integer</p>
+                    </li><li class="listitem">
+                        <p>short, or Short</p>
+                    </li><li class="listitem">
+                        <p>long, or Long</p>
+                    </li><li class="listitem">
+                        <p>java.sql.Timestamp</p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e180"/><p class="title"><strong>Example 2.3. Version</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Course {
+	@Id
+	private Integer id;
+	@Version
+	private Integer version;
+	...
+}</pre>
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Thing {
+	@Id
+	private Integer id;
+	@Version
+	Timestamp ts;
+	...
+}</pre>
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Thing2 {
+	@Id
+	private Integer id;
+	@Version
+	private Instant ts;
+	...
+}</pre>
+                
+            </div></div><br class="example-break"/>
+
+            <p>
+                Hibernate supports a form of optimistic locking that does not require a dedicated "version attribute".
+                This is intended mainly for use with modeling legacy schemas.  The idea is that you can get Hibernate
+                to perform "version checks" using either all of the entity's attributes, or just the attributes that
+                have changed.  This is achieved through the use of the
+                <code class="interfacename">org.hibernate.annotations.OptimisticLocking</code> annotation which defines a
+                single attribute of type <code class="interfacename">org.hibernate.annotations.OptimisticLockType</code>.
+                There are 4 available OptimisticLockTypes:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            <code class="literal">NONE</code> - optimistic locking is disabled.  Even if there is a @Version
+                            annotation present.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">VERSION</code> (the default) - performs optimistic locking based on a @Version
+                            as described above.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">ALL</code> - Perform optimistic locking based on *all* fields as part of an
+                            expanded WHERE clause restriction for the UPDATE/DELETE SQL statement.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">DIRTY</code> - Perform optimistic locking based on *dirty* fields as part of
+                            an expanded WHERE clause restriction for the UPDATE/DELETE SQL statement
+                        </p>
+                    </li></ul></div><p>
+            </p>
+        </div>
+
+        <div class="section" title="2.1.7. Inheritance"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-inheritance"/>2.1.7. Inheritance</h3></div></div></div>
+            
+            <p>
+                
+                blah blah blah
+            </p>
+        </div>
+    </div>
+
+    <p>
+        * dynamic models (hbm.xml)
+            * Map mode
+            * proxy solutions (hibernate-core/src/test/java/org/hibernate/test/dynamicentity/tuplizer2)
+    </p>
+</div>
+    <div class="chapter" title="Chapter 3. Basic Types"><div class="titlepage"><div><div><h2 class="title"><a id="basic"/>Chapter 3. Basic Types</h2></div><div><div class="abstract" title="Abstract"><p class="title"><strong>Abstract</strong></p>
+            <p>
+                This chapter will discuss actual basic type mappings as well as how to override those
+                mappings and provide extra mappings.
+            </p>
+        </div></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#basic-provided">3.1. Hibernate-provided BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-annotation">3.2. The <code class="literal">@Basic</code> annotation</a></span></dt><dt><span class="section"><a href="#d5e555">3.3. The <code class="literal">@Column</code> annotation</a></span></dt><dt><span class="section"><a href="#basic-registry">3.4. BasicTypeRegistry</a></span></dt><dt><span class="section"><a href="#basic-explicit">3.5. Explicit BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-custom">3.6. Custom BasicTypes</a></span></dt><dt><span class="section"><a href="#basic-enums">3.7. Mapping enums</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e637">3.7.1. @Enumerated</a></span></dt><dt><span class="section"><a href="#d5e678">3.7.2. AttributeConverter</a></span></dt><dt><span class="section"><a href="#d5e702">3.7.3. Custom type</a></span></dt></dl></dd><dt><span class="section"><a href="#basic-lob">3.8. Mapping LOBs</a></span></dt><dt><span class="section"><a href="#basic-nationalized">3.9. Mapping Nationalized Character Data</a></span></dt><dt><span class="section"><a href="#basic-uuid">3.10. Mapping UUID Values</a></span></dt><dd><dl><dt><span class="section"><a href="#d5e806">3.10.1. UUID as binary</a></span></dt><dt><span class="section"><a href="#d5e810">3.10.2. UUID as (var)char</a></span></dt><dt><span class="section"><a href="#d5e813">3.10.3. PostgeSQL-specific UUID</a></span></dt><dt><span class="section"><a href="#d5e819">3.10.4. UUID as identifier</a></span></dt></dl></dd><dt><span class="section"><a href="#basic-datetime">3.11. Mapping Date/Time Values</a></span></dt><dt><span class="section"><a href="#basic-jpaconvert">3.12. JPA 2.1 AttributeConverters</a></span></dt></dl></div>
+    
+
+    <p>
+        Basic value types usually map a single database value, or column, to a single, non-aggregated Java
+        type.  Hibernate provides a number of built-in basic types, which follow the natural mappings
+        recommended in the JDBC specifications.
+    </p>
+
+    <p>
+        Internally Hibernate uses a registry of basic types when it needs to resolve the specific
+        <code class="interfacename">org.hibernate.type.Type</code> to use in certain situations.
+    </p>
+
+    <div class="section" title="3.1. Hibernate-provided BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-provided"/>3.1. Hibernate-provided BasicTypes</h2></div></div></div>
+        
+        <div class="table"><a id="d5e216"/><p class="title"><strong>Table 3.1. Standard BasicTypes</strong></p><div class="table-contents">
+            
+            <table summary="Standard BasicTypes" border="1"><colgroup><col/><col/><col/><col/></colgroup><thead><tr><th>Hibernate type (org.hibernate.type package)</th><th>JDBC type</th><th>Java type</th><th>BasicTypeRegistry key(s)</th></tr></thead><tbody><tr><td>StringType</td><td>VARCHAR</td><td>java.lang.String</td><td>string, java.lang.String</td></tr><tr><td>MaterializedClob</td><td>CLOB</td><td>java.lang.String</td><td>materialized_clob</td></tr><tr><td>TextType</td><td>LONGVARCHAR</td><td>java.lang.String</td><td>text</td></tr><tr><td>CharacterType</td><td>CHAR</td><td>char, java.lang.Character</td><td>char, java.lang.Character</td></tr><tr><td>BooleanType</td><td>BIT</td><td>boolean, java.lang.Boolean</td><td>boolean, java.lang.Boolean</td></tr><tr><td>NumericBooleanType</td><td>INTEGER, 0 is false, 1 is true</td><td>boolean, java.lang.Boolean</td><td>numeric_boolean</td></tr><tr><td>YesNoType</td><td>CHAR, 'N'/'n' is false, 'Y'/'y' is true. The uppercase value is written to the database.</td><td>boolean, java.lang.Boolean</td><td>yes_no</td></tr><tr><td>TrueFalseType</td><td>CHAR, 'F'/'f' is false, 'T'/'t' is true. The uppercase value is written to the database.</td><td>boolean, java.lang.Boolean</td><td>true_false</td></tr><tr><td>ByteType</td><td>TINYINT</td><td>byte, java.lang.Byte</td><td>byte, java.lang.Byte</td></tr><tr><td>ShortType</td><td>SMALLINT</td><td>short, java.lang.Short</td><td>short, java.lang.Short</td></tr><tr><td>IntegerTypes</td><td>INTEGER</td><td>int, java.lang.Integer</td><td>int, java.lang.Integer</td></tr><tr><td>LongType</td><td>BIGINT</td><td>long, java.lang.Long</td><td>long, java.lang.Long</td></tr><tr><td>FloatType</td><td>FLOAT</td><td>float, java.lang.Float</td><td>float, java.lang.Float</td></tr><tr><td>DoubleType</td><td>DOUBLE</td><td>double, java.lang.Double</td><td>double, java.lang.Double</td></tr><tr><td>BigIntegerType</td><td>NUMERIC</td><td>java.math.BigInteger</td><td>big_integer, java.math.BigInteger</td></tr><tr><td>BigDecimalType</td><td>NUMERIC</td><td>java.math.BigDecimal</td><td>big_decimal, java.math.bigDecimal</td></tr><tr><td>TimestampType</td><td>TIMESTAMP</td><td>java.sql.Timestamp</td><td>timestamp, java.sql.Timestamp</td></tr><tr><td>TimeType</td><td>TIME</td><td>java.sql.Time</td><td>time, java.sql.Time</td></tr><tr><td>DateType</td><td>DATE</td><td>java.sql.Date</td><td>date, java.sql.Date</td></tr><tr><td>CalendarType</td><td>TIMESTAMP</td><td>java.util.Calendar</td><td>calendar, java.util.Calendar</td></tr><tr><td>CalendarDateType</td><td>DATE</td><td>java.util.Calendar</td><td>calendar_date</td></tr><tr><td>CurrencyType</td><td>java.util.Currency</td><td>VARCHAR</td><td>currency, java.util.Currency</td></tr><tr><td>LocaleType</td><td>VARCHAR</td><td>java.util.Locale</td><td>locale, java.utility.locale</td></tr><tr><td>TimeZoneType</td><td>VARCHAR, using the TimeZone ID</td><td>java.util.TimeZone</td><td>timezone, java.util.TimeZone</td></tr><tr><td>UrlType</td><td>VARCHAR</td><td>java.net.URL</td><td>url, java.net.URL</td></tr><tr><td>ClassType</td><td>VARCHAR (class FQN)</td><td>java.lang.Class</td><td>class, java.lang.Class</td></tr><tr><td>BlobType</td><td>BLOB</td><td>java.sql.Blob</td><td>blog, java.sql.Blob</td></tr><tr><td>ClobType</td><td>CLOB</td><td>java.sql.Clob</td><td>clob, java.sql.Clob</td></tr><tr><td>BinaryType</td><td>VARBINARY</td><td>byte[]</td><td>binary, byte[]</td></tr><tr><td>MaterializedBlobType</td><td>BLOB</td><td>byte[]</td><td>materized_blob</td></tr><tr><td>ImageType</td><td>LONGVARBINARY</td><td>byte[]</td><td>image</td></tr><tr><td>WrapperBinaryType</td><td>VARBINARY</td><td>java.lang.Byte[]</td><td>wrapper-binary, Byte[], java.lang.Byte[]</td></tr><tr><td>CharArrayType</td><td>VARCHAR</td><td>char[]</td><td>characters, char[]</td></tr><tr><td>CharacterArrayType</td><td>VARCHAR</td><td>java.lang.Character[]</td><td>wrapper-characters, Character[], java.lang.Character[]</td></tr><tr><td>UUIDBinaryType</td><td>BINARY</td><td>java.util.UUID</td><td>uuid-binary, java.util.UUID</td></tr><tr><td>UUIDCharType</td><td>CHAR, can also read VARCHAR</td><td>java.util.UUID</td><td>uuid-char</td></tr><tr><td>PostgresUUIDType</td><td>PostgreSQL UUID, through Types#OTHER, which complies to the PostgreSQL JDBC driver definition</td><td>java.util.UUID</td><td>pg-uuid</td></tr><tr><td>SerializableType</td><td>VARBINARY</td><td>implementors of java.lang.Serializable</td><td> Unlike the other value types, multiple instances of this type are registered. It is registered
+                            once under java.io.Serializable, and registered under the specific java.io.Serializable implementation
+                            class names.</td></tr><tr><td>StringNVarcharType</td><td>NVARCHAR</td><td>java.lang.String</td><td>nstring</td></tr><tr><td>NTextType</td><td>LONGNVARCHAR</td><td>java.lang.String</td><td>ntext</td></tr><tr><td>NClobType</td><td>NCLOB</td><td>java.sql.NClob</td><td>nclob, java.sql.NClob</td></tr><tr><td>MaterializedNClobType</td><td>NCLOB</td><td>java.lang.String</td><td>materialized_nclob</td></tr><tr><td>PrimitiveCharacterArrayNClobType</td><td>NCHAR</td><td>char[]</td><td>N/A</td></tr><tr><td>CharacterNCharType</td><td>NCHAR</td><td>java.lang.Character</td><td>ncharacter</td></tr><tr><td>CharacterArrayNClobType</td><td>NCLOB</td><td>java.lang.Character[]</td><td>N/A</td></tr></tbody></table>
+        </div></div><br class="table-break"/>
+
+
+        <div class="table"><a id="d5e451"/><p class="title"><strong>Table 3.2. BasicTypes added by hibernate-java8</strong></p><div class="table-contents">
+            
+            <table summary="BasicTypes added by hibernate-java8" border="1"><colgroup><col/><col/><col/><col/></colgroup><thead><tr><th>Hibernate type (org.hibernate.type package)</th><th>JDBC type</th><th>Java type</th><th>BasicTypeRegistry key(s)</th></tr></thead><tbody><tr><td>DurationType</td><td>BIGINT</td><td>java.time.Duration</td><td>Duration, java.time.Duration</td></tr><tr><td>InstantType</td><td>TIMESTAMP</td><td>java.time.Instant</td><td>Instant, java.time.Instant</td></tr><tr><td>LocalDateTimeType</td><td>TIMESTAMP</td><td>java.time.LocalDateTime</td><td>LocalDateTime, java.time.LocalDateTime</td></tr><tr><td>LocalDateType</td><td>DATE</td><td>java.time.LocalDate</td><td>LocalDate, java.time.LocalDate</td></tr><tr><td>LocalTimeType</td><td>TIME</td><td>java.time.LocalTime</td><td>LocalTime, java.time.LocalTime</td></tr><tr><td>OffsetDateTimeType</td><td>TIMESTAMP</td><td>java.time.OffsetDateTime</td><td>OffsetDateTime, java.time.OffsetDateTime</td></tr><tr><td>OffsetTimeType</td><td>TIME</td><td>java.time.OffsetTime</td><td>OffsetTime, java.time.OffsetTime</td></tr><tr><td>OffsetTimeType</td><td>TIMESTAMP</td><td>java.time.ZonedDateTime</td><td>ZonedDateTime, java.time.ZonedDateTime</td></tr></tbody></table>
+        </div></div><br class="table-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                To use these hibernate-java8 types just add the hibernate-java8 jar to your classpath; Hibernate
+                will take care of the rest.  See <a class="xref" href="#basic-datetime" title="3.11. Mapping Date/Time Values">Section 3.11, “Mapping Date/Time Values”</a>
+            </p>
+        </div>
+
+        
+
+        <p>
+            These mappings are managed by a service inside Hibernate called the
+            <code class="classname">org.hibernate.type.BasicTypeRegistry</code>, which essentially maintains a map of
+            <code class="interfacename">org.hibernate.type.BasicType</code> (a <code class="interfacename">org.hibernate.type.Type</code>
+            specialization) instances keyed by a name.  That is the purpose of the "BasicTypeRegistry key(s)" column
+            in the previous tables.  We will revisit this detail later.
+        </p>
+    </div>
+
+
+    <div class="section" title="3.2. The @Basic annotation"><div class="titlepage"><div><div><h2 class="title"><a id="basic-annotation"/>3.2. The <code class="literal">@Basic</code> annotation</h2></div></div></div>
+        
+
+        <p>
+            Strictly speaking, a basic type is denoted with the <code class="interfacename">javax.persistence.Basic</code>
+            annotation.  Generally speaking the <code class="literal">@Basic</code> annotation can be ignored.  Both of the
+            following examples are ultimately the same.
+        </p>
+
+        <div class="example"><a id="d5e514"/><p class="title"><strong>Example 3.1. With <code class="literal">@Basic</code></strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+    @Id
+	@Basic
+	private Integer id;
+	@Basic
+	private String sku;
+	@Basic
+	private String name;
+	@Basic
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+        <div class="example"><a id="d5e518"/><p class="title"><strong>Example 3.2. Without <code class="literal">@Basic</code></strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	@Id
+	private Integer id;
+	private String sku;
+	private String name;
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Tip</h2>
+            <p>
+                The JPA specification strictly limits the Java types that can be marked as
+                basic to the following:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">Java primitive types (boolean, int, etc)</li><li class="listitem">wrappers for the primitive types (java.lang.Boolean, java.lang.Integer, etc)</li><li class="listitem">java.lang.String</li><li class="listitem">java.math.BigInteger</li><li class="listitem">java.math.BigDecimal</li><li class="listitem">java.util.Date</li><li class="listitem">java.util.Calendar</li><li class="listitem">java.sql.Date</li><li class="listitem">java.sql.Time</li><li class="listitem">java.sql.Timestamp</li><li class="listitem">byte[]</li><li class="listitem">Byte[]</li><li class="listitem">char[]</li><li class="listitem">Character[]</li><li class="listitem">enums</li><li class="listitem">any other type that implements Serializable*</li></ul></div><p>
+                * JPA's "support" for Serializable types is to directly serialize their state to the database.
+            </p>
+            <p>
+                If provider portability is a concern, you should stick to just these basic types.  Note that JPA
+                2.1 did add the notion of an <code class="interfacename">javax.persistence.AttributeConverter</code>
+                to help alleviate some of these concerns; see <a class="xref" href="#basic-jpaconvert" title="3.12. JPA 2.1 AttributeConverters">Section 3.12, “JPA 2.1 AttributeConverters”</a>
+            </p>
+        </div>
+
+        <p>
+            The <code class="literal">@Basic</code> annotation defines 2 attributes.
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        <code class="literal">optional</code> - boolean (defaults to true) - Defines whether this attribute
+                        allows nulls.  JPA defines this as "a hint", which essentially means that it affect is
+                        specifically required.  As long as the type is not primitive, Hibernate takes this to mean
+                        that the underlying column should be <code class="literal">NULLABLE</code>.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        <code class="literal">fetch</code> - FetchType (defaults to EAGER) - Defines whether this attribute
+                        should be fetched eagerly or lazily.  JPA says that EAGER is a requirement to the provider
+                        (Hibernate) that the value should be fetched when the owner is fetched but that
+                        LAZY is merely a hint that the value be fetched when the attribute is accessed.  Hibernate
+                        ignores this setting for basic types unless you are using bytecode enhancement.  See
+                        the <em class="citetitle">Hibernate User Guide</em> for additional information on
+                        fetching and on bytecode enhancement.
+                    </p>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="3.3. The @Column annotation"><div class="titlepage"><div><div><h2 class="title"><a id="d5e555"/>3.3. The <code class="literal">@Column</code> annotation</h2></div></div></div>
+        
+        <p>
+            JPA defines rules for implicitly determining the name of tables and columns.  For a detailed discussion
+            of implicit naming see <a class="xref" href="#">???</a>.
+        </p>
+
+        <p>
+            For basic type attributes, the implicit naming rule is that the column name is the same as the attribute
+            name.  If that implicit naming rule does not meet your requirements, you can explicitly tell Hibernate
+            (and other providers) the column name to use.
+        </p>
+
+        <div class="example"><a id="d5e561"/><p class="title"><strong>Example 3.3. Explicit column naming</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	@Id
+	@Basic
+	private Integer id;
+	@Basic
+	private String sku;
+	@Basic
+	private String name;
+	@Basic
+	@Column( name = "NOTES" )
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Here we use <code class="literal">@Column</code> to explicitly map the <code class="literal">description</code> attribute to the
+            <code class="literal">NOTES</code> column, as opposed to the implicit column name <code class="literal">description</code>.
+        </p>
+
+        <p>
+            The <code class="literal">@Column</code> annotation defines other mapping information as well.  See its javadocs
+            for details.
+        </p>
+    </div>
+
+    <div class="section" title="3.4. BasicTypeRegistry"><div class="titlepage"><div><div><h2 class="title"><a id="basic-registry"/>3.4. BasicTypeRegistry</h2></div></div></div>
+        
+        <p>
+            We said before that a Hibernate type is not a Java type, nor a SQL type, but that it
+            understands both and performs the marshalling between them.  But looking at the
+            basic type mappings from the previous examples, how did Hibernate know to use
+            its <code class="classname">org.hibernate.type.StringType</code> for mapping for
+            <code class="classname">java.lang.String</code> attributes or its
+            <code class="classname">org.hibernate.type.IntegerType</code> for mapping
+            <code class="classname">java.lang.Integer</code> attributes?
+        </p>
+
+        <p>
+            The answer lies in a service inside Hibernate called the
+            <code class="classname">org.hibernate.type.BasicTypeRegistry</code>, which essentially maintains a map of
+            <code class="interfacename">org.hibernate.type.BasicType</code> (a <code class="interfacename">org.hibernate.type.Type</code>
+            specialization) instances keyed by a name.
+        </p>
+
+        <p>
+            We will see later (<a class="xref" href="#basic-explicit" title="3.5. Explicit BasicTypes">Section 3.5, “Explicit BasicTypes”</a>) that we can explicitly tell Hibernate which
+            BasicType to use for a particular attribute.  But first let's explore how implicit resolution works
+            and how applications can adjust implicit resolution.
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                A thorough discussion of the BasicTypeRegistry and all the different ways to contribute types to it
+                is beyond the scope of this documentation.  Please see <em class="citetitle">Integrations Guide</em>
+                for complete details.
+            </p>
+        </div>
+
+        <p>
+            As an example, take a String attribute such as we saw before with Product#sku.  Since there was no
+            explicit type mapping, Hibernate looks to the BasicTypeRegistry to find the registered mapping
+            for <code class="classname">java.lang.String</code>.  This goes back to the "BasicTypeRegistry key(s)" column
+            we saw in the tables at the start of this chapter.
+        </p>
+
+        <p>
+            As a baseline within BasicTypeRegistry, Hibernate follows the recommended mappings of JDBC
+            for Java types.  JDBC recommends mapping Strings to VARCHAR, which is the exact mapping that
+            StringType handles.  So that is the baseline mapping within BasicTypeRegistry for Strings.
+        </p>
+
+        <p>
+            Applications can also extend (add new BasicType registrations) or override (replace an exiting BasicType
+            registration) using one of the <code class="methodname">MetadataBuilder#applyBasicType</code> methods
+            or the <code class="methodname">MetadataBuilder#applyTypes</code> method during bootstrap.  For more details, see
+            <a class="xref" href="#basic-custom" title="3.6. Custom BasicTypes">Section 3.6, “Custom BasicTypes”</a>
+        </p>
+    </div>
+
+    <div class="section" title="3.5. Explicit BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-explicit"/>3.5. Explicit BasicTypes</h2></div></div></div>
+        
+
+        <p>
+            Sometimes you want a particular attribute to be handled differently.  Occasionally Hibernate will
+            implicitly pick a BasicType that you do not want (and for some reason you do not want to adjust the
+            BasicTypeRegistry).
+        </p>
+
+        <p>
+            In these cases you must explicitly tell Hibernate the BasicType to use, via the
+            <code class="interfacename">org.hibernate.annotations.Type</code> annotation.
+        </p>
+
+        <div class="example"><a id="d5e599"/><p class="title"><strong>Example 3.4. Using @org.hibernate.annotations.Type</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@org.hibernate.annotations.Type( type="nstring" )
+private String name;
+
+@org.hibernate.annotations.Type( type="materialized_nclob" )
+private String description;</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            This tells Hibernate to store the Strings as nationalized data.  This is just for illustration purposes;
+            for better ways to indicate nationalized character data see <a class="xref" href="#basic-nationalized" title="3.9. Mapping Nationalized Character Data">Section 3.9, “Mapping Nationalized Character Data”</a>
+        </p>
+
+        <p>
+            Additionally the description is to be handled as a LOB.  Again, for better ways to indicate
+            LOBs see <a class="xref" href="#basic-lob" title="3.8. Mapping LOBs">Section 3.8, “Mapping LOBs”</a>.
+        </p>
+
+        <p>
+            The <code class="methodname">org.hibernate.annotations.Type#type</code> attribute can name any of the following:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>FQN of any <code class="interfacename">org.hibernate.type.Type</code> implementation</p></li><li class="listitem"><p>Any key registered with BasicTypeRegistry</p></li><li class="listitem"><p>The name of any known "type definitions"</p></li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="3.6. Custom BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-custom"/>3.6. Custom BasicTypes</h2></div></div></div>
+        
+
+        <p>
+            Hibernate makes it relatively easy for developers to create their own basic type mappings type.  For
+            example, you might want to persist properties of type <code class="classname">java.lang.BigInteger</code> to
+            <code class="literal">VARCHAR</code> columns, or support completely new types.
+        </p>
+
+        <p>
+            There are 2 approaches to developing a custom BasicType.  As a means of illustrating the different
+            approaches, lets consider a use case where we need to support a class called Fizzywig from a third party
+            library.  Lets assume that Fizzywig naturally stores as a VARCHAR.
+        </p>
+
+        <p>
+            The first approach is to directly implement the BasicType interface.
+        </p>
+
+        <div class="example"><a id="d5e623"/><p class="title"><strong>Example 3.5. Custom BasicType implementation</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class FizzywigType1 implements org.hibernate.type.BasicType {
+	public static final FizzywigType1 INSTANCE = new FizzywigType1();
+
+	@Override
+	public String[] getRegistrationKeys() {
+		return new String[] { Fizzywig.class.getName() };
+	}
+
+	@Override
+	public int[] sqlTypes(Mapping mapping) {
+		return new int[] { java.sql.Types.VARCHAR };
+	}
+
+	@Override
+	public Class getReturnedClass() {
+		return Money.class;
+	}
+
+	@Override
+	public Object nullSafeGet(
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner) throws SQLException {
+		return Fizzwig.fromString(
+				StringType.INSTANCE.get( rs, names[0], sesson )
+		);
+	}
+
+	@Override
+	public void nullSafeSet(
+			PreparedStatement st,
+			Object value,
+			int index,
+			boolean[] settable,
+			SessionImplementor session) throws SQLException {
+		final String dbValue = value == null
+				? null
+				: ( (Fizzywig) value ).asString();
+		StringType.INSTANCE.nullSafeSet( st, value, index, settable, session );
+	}
+
+	...
+}</pre>
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">MetadataSources metadataSources = ...;
+
+metadataSources.getMetaDataBuilder()
+		.applyBasicType( FizzwigType1.INSTANCE )
+		...</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            The second approach is to implement the UserType interface.
+        </p>
+
+        <div class="example"><a id="d5e628"/><p class="title"><strong>Example 3.6. Custom UserType implementation</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class FizzywigType2 implements org.hibernate.usertype.UserType {
+	public static final String KEYS = new String[] { Fizzywig.class.getName() };
+	public static final FizzywigType1 INSTANCE = new FizzywigType1();
+
+	@Override
+	public int[] sqlTypes(Mapping mapping) {
+		return new int[] { java.sql.Types.VARCHAR };
+	}
+
+	@Override
+	public Class getReturnedClass() {
+		return Fizzywig.class;
+	}
+
+	@Override
+	public Object nullSafeGet(
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner) throws SQLException {
+		return Fizzwig.fromString(
+				StringType.INSTANCE.get( rs, names[0], sesson )
+		);
+	}
+
+	@Override
+	public void nullSafeSet(
+			PreparedStatement st,
+			Object value,
+			int index,
+			SessionImplementor session) throws SQLException {
+		final String dbValue = value == null
+				? null
+				: ( (Fizzywig) value ).asString();
+		StringType.INSTANCE.nullSafeSet( st, value, index, session );
+	}
+
+	...
+}</pre>
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">MetadataSources metadataSources = ...;
+
+metadataSources.getMetaDataBuilder()
+		.applyBasicType( FizzwigType2.KEYS, FizzwigType2.INSTANCE )
+		...</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            For additional information on developing and registering custom types, see the
+            <em class="citetitle">Hibernate Integration Guide</em>.
+        </p>
+    </div>
+
+    <div class="section" title="3.7. Mapping enums"><div class="titlepage"><div><div><h2 class="title"><a id="basic-enums"/>3.7. Mapping enums</h2></div></div></div>
+        
+
+        <p>
+            Hibernate supports the mapping of Java enums as basic value types in a number of different ways.
+        </p>
+
+        <div class="section" title="3.7.1. @Enumerated"><div class="titlepage"><div><div><h3 class="title"><a id="d5e637"/>3.7.1. @Enumerated</h3></div></div></div>
+            
+            <p>
+                The original JPA-compliant way to map enums was via the <code class="literal">@Enumerated</code>
+                and <code class="literal">@MapKeyEnumerated</code> for map keys annotations which works on the principle that
+                the enum values are stored according to one of 2 strategies indicated by
+                <code class="interfacename">javax.persistence.EnumType</code>:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            <code class="literal">ORDINAL</code> - stored according to the enum value's ordinal position within
+                            the enum class, as indicated by java.lang.Enum#ordinal
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">STRING</code> - stored according to the enum value's name, as indicated by
+                            java.lang.Enum#name
+                        </p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e650"/><p class="title"><strong>Example 3.7. @Enumerated(ORDINAL) example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Enumerated
+	public Gender gender;
+
+	public static enum Gender {
+		MALE,
+		FEMALE
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                In the ORDINAL example, the gender column is defined as an (nullable) INTEGER type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">0</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">1</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e664"/><p class="title"><strong>Example 3.8. @Enumerated(STRING) example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Enumerated(STRING)
+	public Gender gender;
+
+	public static enum Gender {
+		MALE,
+		FEMALE
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                In the STRING example, the gender column is defined as an (nullable) VARCHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">MALE</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">FEMALE</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+        </div>
+
+        <div class="section" title="3.7.2. AttributeConverter"><div class="titlepage"><div><div><h3 class="title"><a id="d5e678"/>3.7.2. AttributeConverter</h3></div></div></div>
+            
+            <p>
+                You can also map enums in a JPA compliant way using a JPA 2.1 AttributeConverter.  Let's revisit the
+                Gender enum example, but instead we want to store the more standardized <code class="literal">'M'</code>
+                and <code class="literal">'F'</code> codes.
+            </p>
+
+            <div class="example"><a id="d5e683"/><p class="title"><strong>Example 3.9. Enum mapping with AttributeConverter example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Basic
+	@Convert( converter=GenderConverter.class )
+	public Gender gender;
+}
+
+public enum Gender {
+	MALE( 'M' ),
+	FEMALE( 'F' );
+
+	private final char code;
+
+	private Gender(char code) {
+		this.code = code;
+	}
+
+	public char getCode() {
+		return code;
+	}
+
+	public static Gender fromCode(char code) {
+		if ( code == 'M' || code == 'm' ) {
+			return MALE;
+		}
+		if ( code == 'F' || code == 'f' ) {
+			return FEMALE;
+		}
+		throw ...
+	}
+}
+
+@Converter
+public class GenderConverter
+		implements AttributeConverter&lt;Character,Gender&gt; {
+
+	public Character convertToDatabaseColumn(Gender value) {
+		if ( value == null ) {
+			return null;
+		}
+
+		return value.getCode();
+	}
+
+	public Gender convertToEntityAttribute(Character value) {
+		if ( value == null ) {
+			return null;
+		}
+
+		return Gender.fromCode( value );
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Here, the gender column is defined as a CHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'M'</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'F'</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <p>
+                For additional details on using AttributeConverters, see <a class="xref" href="#basic-jpaconvert" title="3.12. JPA 2.1 AttributeConverters">Section 3.12, “JPA 2.1 AttributeConverters”</a>.
+            </p>
+
+            <p>
+                Note that JPA explicitly disallows the use of an AttributeConverter with an attribute marked
+                as <code class="literal">@Enumerated</code>.  So if using the AttributeConverter approach, be sure to not mark the
+                attribute as <code class="literal">@Enumerated</code>.
+            </p>
+        </div>
+
+        <div class="section" title="3.7.3. Custom type"><div class="titlepage"><div><div><h3 class="title"><a id="d5e702"/>3.7.3. Custom type</h3></div></div></div>
+            
+
+            <p>
+                You can also map enums using a Hibernate custom type mapping.  Let's again revisit the Gender enum
+                example, this time using a custom Type to store the more standardized <code class="literal">'M'</code>
+                and <code class="literal">'F'</code> codes.
+            </p>
+
+            <div class="example"><a id="d5e707"/><p class="title"><strong>Example 3.10. Enum mapping with custom Type example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">import org.hibernate.type.descriptor.java.CharacterTypeDescriptor;
+
+@Entity
+public class Person {
+	...
+	@Basic
+	@Type( type = GenderType.class )
+	public Gender gender;
+}
+
+public enum Gender {
+	MALE( 'M' ),
+	FEMALE( 'F' );
+
+	private final char code;
+
+	private Gender(char code) {
+		this.code = code;
+	}
+
+	public char getCode() {
+		return code;
+	}
+
+	public static Gender fromCode(char code) {
+		if ( code == 'M' || code == 'm' ) {
+			return MALE;
+		}
+		if ( code == 'F' || code == 'f' ) {
+			return FEMALE;
+		}
+		throw ...
+	}
+}
+
+@Converter
+public class GenderType
+		extends AbstractSingleColumnStandardBasicType&lt;Gender&gt; {
+
+	public static final GenderType INSTANCE = new GenderType();
+
+	private GenderType() {
+		super(
+				CharTypeDescriptor.INSTANCE,
+				GenderJavaTypeDescriptor.INSTANCE
+		);
+	}
+
+	public String getName() {
+		return "gender";
+	}
+
+	@Override
+	protected boolean registerUnderJavaType() {
+		return true;
+	}
+}
+
+public static class GenderJavaTypeDescriptor
+		extends AbstractTypeDescriptor&lt;Gender&gt; {
+	public static final GenderJavaTypeDescriptor INSTANCE = new GenderJavaTypeDescriptor();
+
+	public String toString(Gender value) {
+		return value == null ? null : value.name();
+	}
+
+	public Gender fromString(String string) {
+		return string == null ? null : Gender.valueOf( string );
+	}
+
+	public &lt;X&gt; X unwrap(Gender value, Class&lt;X&gt; type, WrapperOptions options) {
+		return CharacterTypeDescriptor.INSTANCE.unwrap(
+				value == null ? null : value.getCode(),
+				type,
+				options
+		);
+	}
+
+	public &lt;X&gt; Gender wrap(X value, WrapperOptions options) {
+		return CharacterTypeDescriptor.INSTANCE.wrap( value, options );
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Again, the gender column is defined as a CHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'M'</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'F'</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <p>
+                For additional details on using custom types, see <a class="xref" href="#basic-custom" title="3.6. Custom BasicTypes">Section 3.6, “Custom BasicTypes”</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="3.8. Mapping LOBs"><div class="titlepage"><div><div><h2 class="title"><a id="basic-lob"/>3.8. Mapping LOBs</h2></div></div></div>
+        
+
+        <p>
+            Mapping LOBs (database Large OBjects) come in 2 forms, those using the JDBC locator types and those
+            <em class="firstterm">materializing</em> the LOB data.
+        </p>
+
+        <div class="sidebar" title="Locator versus materialized"><div class="titlepage"><div><div><p class="title"><strong>Locator versus materialized</strong></p></div></div></div>
+            
+            <p>
+                JDBC LOB locators exist to allow efficient access to the LOB data.  They allow the JDBC driver to
+                stream parts of the LOB data as needed, potentially freeing up memory space.  However they can be
+                unnatural to deal with and have certain limitations.  For example, a LOB locator is only portably
+                valid during the duration of the transaction in which it was obtained.
+            </p>
+            <p>
+                The idea of materialized LOBs is to trade-off the potential efficiency (not all drivers handle LOB
+                data efficiently) for a more natural programming paradigm using familiar Java types such as
+                String or byte[], etc for these LOBs.
+            </p>
+            <p>
+                Materialized deals with the entire LOB contents in memory, whereas LOB locators (in theory) allow
+                streaming parts of the LOB contents into memory as needed.
+            </p>
+        </div>
+
+        <p>
+            The JDBC LOB locator types include:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><code class="interfacename">java.sql.Blob</code></p>
+                    <p><code class="interfacename">java.sql.Clob</code></p>
+                    <p><code class="interfacename">java.sql.NClob</code></p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Mapping materialized forms of these LOB values would use more familiar Java types
+            such as String, char[], byte[], etc.  The trade off for "more familiar" is usually
+            performance.
+        </p>
+
+        <p>
+            For a first look lets assume we have a CLOB column that we would like to map (NCLOB character LOB data
+            will be covered in <a class="xref" href="#basic-nationalized" title="3.9. Mapping Nationalized Character Data">Section 3.9, “Mapping Nationalized Character Data”</a>).
+        </p>
+
+        <div class="example"><a id="d5e744"/><p class="title"><strong>Example 3.11. CLOB - SQL</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table product(
+	...
+	description CLOB not null,
+	...
+)</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Let's first map this using the JDBC locator.
+        </p>
+
+        <div class="example"><a id="d5e748"/><p class="title"><strong>Example 3.12. CLOB - locator mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public Clob description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We could also map a materialized form.
+        </p>
+
+        <div class="example"><a id="d5e752"/><p class="title"><strong>Example 3.13. CLOB - materialized mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public String description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                How JDBC deals with LOB data varies from driver to driver.  Hibernate tries to handle all these variances
+                for you.  However some drivers do not allow Hibernate to always do that in an automatic fashion
+                (looking directly at you PostgreSQL JDBC drivers).  In such cases you may have to do some extra
+                to get LOBs working.  Such discussions are beyond the scope of this guide however.
+                
+            </p>
+        </div>
+
+        <p>
+            We might even want the materialized data as a char array (for some crazy reason).
+        </p>
+
+        <div class="example"><a id="d5e758"/><p class="title"><strong>Example 3.14. CLOB - materialized char[] mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public char[] description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We'd map BLOB data in a similar fashion.
+        </p>
+
+        <div class="example"><a id="d5e762"/><p class="title"><strong>Example 3.15. BLOB - SQL</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table step(
+	...
+	instruction BLOB not null,
+	...
+)</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Let's first map this using the JDBC locator.
+        </p>
+
+        <div class="example"><a id="d5e766"/><p class="title"><strong>Example 3.16. BLOB - locator mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Step {
+	...
+	@Lob
+	@Basic
+	public Blob instructions;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We could also map a materialized BLOB form.
+        </p>
+
+        <div class="example"><a id="d5e770"/><p class="title"><strong>Example 3.17. BLOB - materialized mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Step {
+	...
+	@Lob
+	@Basic
+	public byte[] instructions;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        
+    </div>
+
+    <div class="section" title="3.9. Mapping Nationalized Character Data"><div class="titlepage"><div><div><h2 class="title"><a id="basic-nationalized"/>3.9. Mapping Nationalized Character Data</h2></div></div></div>
+        
+
+        <p>
+            JDBC 4 added the ability to explicitly handle nationalized character data.  To this end
+            it added specific nationalized character data types.
+            
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><code class="literal">NCHAR</code></p>
+                    <p><code class="literal">NVARCHAR</code></p>
+                    <p><code class="literal">LONGNVARCHAR</code></p>
+                    <p><code class="literal">NCLOB</code></p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            To map a specific attribute to a nationalized variant datatype, Hibernate defines the
+            <code class="literal">@Nationalized</code> annotation.
+        </p>
+
+        <div class="example"><a id="d5e788"/><p class="title"><strong>Example 3.18. NVARCHAR mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Basic
+	@Nationalized
+	public String description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e791"/><p class="title"><strong>Example 3.19. NCLOB (locator) mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	@Nationalized
+	public NClob description;
+	// Clob also works, because NClob
+	// extends Clob.  The db type is
+	// still NCLOB either way and
+	// handled as such
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e794"/><p class="title"><strong>Example 3.20. NCLOB (materialized) mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	@Nationalized
+	public String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            If you application and database are entirely nationalized you may instead want to enable nationalized
+            character data as the default.  You can do this via the
+            <code class="literal">hibernate.use_nationalized_character_data</code> setting or by calling
+            <code class="methodname">MetadataBuilder#enableGlobalNationalizedCharacterDataSupport</code> during bootstrap.
+        </p>
+    </div>
+
+    <div class="section" title="3.10. Mapping UUID Values"><div class="titlepage"><div><div><h2 class="title"><a id="basic-uuid"/>3.10. Mapping UUID Values</h2></div></div></div>
+        
+
+        <p>
+            Hibernate also allows you to map UUID values, again in a number of ways.
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                The default UUID mapping is as binary because it represents more efficient storage.  However
+                many applications prefer the readability of character storage.  To switch the default mapping,
+                simply call <code class="literal">MetadataBuilder.applyBasicType( UUIDCharType.INSTANCE, UUID.class.getName() )</code>
+            </p>
+        </div>
+
+        <div class="section" title="3.10.1. UUID as binary"><div class="titlepage"><div><div><h3 class="title"><a id="d5e806"/>3.10.1. UUID as binary</h3></div></div></div>
+            
+            <p>
+                As mentioned, the default mapping for UUID attributes.  Maps the UUID to a byte[]
+                using java.util.UUID#getMostSignificantBits and java.util.UUID#getLeastSignificantBits
+                and stores that as BINARY data.
+            </p>
+            <p>
+                Chosen as the default simply because it is generally more efficient from storage perspective.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.2. UUID as (var)char"><div class="titlepage"><div><div><h3 class="title"><a id="d5e810"/>3.10.2. UUID as (var)char</h3></div></div></div>
+            
+            <p>
+                Maps the UUID to a String using java.util.UUID#toString and java.util.UUID#fromString
+                and stores that as CHAR or VARCHAR data.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.3. PostgeSQL-specific UUID"><div class="titlepage"><div><div><h3 class="title"><a id="d5e813"/>3.10.3. PostgeSQL-specific UUID</h3></div></div></div>
+            
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Important</h2>
+                <p>When using one of the PostgreSQL Dialects, this becomes the default UUID mapping</p>
+            </div>
+
+            <p>
+                Maps the UUID using PostgreSQL's specific UUID data type.  The PostgreSQL JDBC driver choses to
+                map its UUID type to the <code class="literal">OTHER</code> code.  Note that this can cause difficulty as the
+                driver chooses to map many different data types to OTHER.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.4. UUID as identifier"><div class="titlepage"><div><div><h3 class="title"><a id="d5e819"/>3.10.4. UUID as identifier</h3></div></div></div>
+            
+            <p>
+                Hibernate supports using UUID values as identifiers.  They can even be generated!  For
+                details see the discussion of generators in <a class="xref" href="#identifiers-generators" title="6.3. Generated identifier values">Section 6.3, “Generated identifier values”</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="3.11. Mapping Date/Time Values"><div class="titlepage"><div><div><h2 class="title"><a id="basic-datetime"/>3.11. Mapping Date/Time Values</h2></div></div></div>
+        
+        <p>
+            
+            
+            blah blah blah
+        </p>
+    </div>
+
+    <div class="section" title="3.12. JPA 2.1 AttributeConverters"><div class="titlepage"><div><div><h2 class="title"><a id="basic-jpaconvert"/>3.12. JPA 2.1 AttributeConverters</h2></div></div></div>
+        
+        <p>
+            
+            blah blah blah
+        </p>
+    </div>
+
+</div>
+    <div xml:lang="en" class="chapter" title="Chapter 4. Compositions"><div class="titlepage"><div><div><h2 class="title"><a id="composition"/>Chapter 4. Compositions</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#d5e852">4.1. Component / Embedded</a></span></dt><dt><span class="section"><a href="#composition-multiple">4.2. Multiple compositions</a></span></dt><dd><dl><dt><span class="section"><a href="#composition-multiple-jpa">4.2.1. JPA's AttributeOverride</a></span></dt><dt><span class="section"><a href="#composition-multiple-namingstrategy">4.2.2. ImplicitNamingStrategy</a></span></dt></dl></dd><dt><span class="section"><a href="#composition-collections">4.3. Collections of compositions</a></span></dt><dt><span class="section"><a href="#composition-mapkey">4.4. Compositions as Map key</a></span></dt><dt><span class="section"><a href="#composition-identifier">4.5. Compositions as identifiers</a></span></dt></dl></div>
+    
+
+    <div class="sidebar" title="Related topics"><div class="titlepage"><div><div><p class="title"><strong>Related topics</strong></p></div></div></div>
+        
+        <div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                <p><a class="xref" href="#">???</a></p>
+            </li><li class="listitem">
+                <p><a class="xref" href="#">???</a></p>
+            </li><li class="listitem">
+                <p><a class="xref" href="#">???</a></p>
+            </li></ul></div>
+    </div>
+
+    <p>
+        Historically Hibernate called these components.  JPA calls them embeddables.  Either way the concept is the
+        same: a composition of values.  For example we might have a Name class that is a composition of
+        first-name and last-name, or an Address class that is a composition of street, city, postal code, etc.
+    </p>
+
+    <div class="example"><a id="composition-ex-embeddable"/><p class="title"><strong>Example 4.1. Simple composition example</strong></p><div class="example-contents">
+        
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Embeddable
+public class Name {
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	...
+}</pre>
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Embeddable
+public class Address {
+	private String line1;
+	private String line2;
+	@Embedded
+	private ZipCode zipCode;
+	...
+
+	@Embeddable
+	public static class Zip {
+		private String postalCode;
+		private String plus4;
+		...
+	}
+}</pre>
+    </div></div><br class="example-break"/>
+
+    <p>
+        A composition is another form of value type.  The lifecycle of a composition is defined by the thing that
+        contains it.
+    </p>
+
+    <p>
+        A composition inherits the attribute access of its parent.  For details on attribute access, see
+        <a class="xref" href="#">???</a>.
+    </p>
+
+    <p>
+        Compositions can be made up of basic values as well as associations, with the caveat that compositions which
+        are used as collection elements cannot themselves define collections.
+    </p>
+
+    <div class="section" title="4.1. Component / Embedded"><div class="titlepage"><div><div><h2 class="title"><a id="d5e852"/>4.1. Component / Embedded</h2></div></div></div>
+        
+        <p>
+            This is the form of composition you will see most often.  Here an entity or another composition
+            is the container.
+        </p>
+
+        <div class="example"><a id="composition-ex-embedded1"/><p class="title"><strong>Example 4.2. Simple Embedded</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	@Id
+	private Integer id;
+	@Embedded
+	private Name name;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                Notice that JPA defines 2 terms for composition: Embeddable and Embedded.  Embeddable is used to
+                describe the composition class itself (Name).  Embedded is used to describe a usage of that
+                composition (Person.name).
+            </p>
+        </div>
+
+        <p>
+            The composition here is the Name type related to Person.name.
+        </p>
+
+        <div class="example"><a id="composition-ex-embedded1-sql"/><p class="title"><strong>Example 4.3. Person table</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table Person (
+    id integer not null,
+    firstName VARCHAR,
+    middleName VARCHAR,
+    lastName VARCHAR,
+    ...
+)</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            The composed values are mapped to the same table as the parent table.  Composition is part of good
+            OO data modeling (idiomatic java).  In fact that table could also be mapped by the following entity instead.
+        </p>
+
+        <div class="example"><a id="composition-ex-no-composition"/><p class="title"><strong>Example 4.4. Alternative to composition</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	@Id
+	private Integer id;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            The composition form is certainly more OO.  And that becomes more evident as we work with multiple
+            compositions.
+        </p>
+    </div>
+
+    <div class="section" title="4.2. Multiple compositions"><div class="titlepage"><div><div><h2 class="title"><a id="composition-multiple"/>4.2. Multiple compositions</h2></div></div></div>
+        
+
+        <div class="example"><a id="composition-ex-multiple-compositions"/><p class="title"><strong>Example 4.5. Multiple compositions</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Contact {
+	@Id
+	private Integer id;
+	@Embedded
+	private Name name;
+	@Embedded
+	private Address homeAddress;
+	@Embedded
+	private Address mailingAddress;
+	@Embedded
+	private Address workAddress;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            It is certainly more convenient to work with the compositions.  However, an interesting thing happens
+            in this particular example.  By default, this mapping actually will not work as-is.
+            The problem is in how JPA defines implicit naming rules for columns that are part of a composition, which
+            say that all of the Address compositions would map to the same implicit column names.
+        </p>
+
+        <p>
+            This occurs any time we have multiple compositions based on the same embeddable in a given parent.
+            We have a few options to handle this issue.
+        </p>
+
+        <div class="section" title="4.2.1. JPA's AttributeOverride"><div class="titlepage"><div><div><h3 class="title"><a id="composition-multiple-jpa"/>4.2.1. JPA's AttributeOverride</h3></div></div></div>
+            
+
+            <p>
+                The JPA-defined way to handle this situation is through the use of its AttributeOverride annotation.
+            </p>
+
+            <div class="example"><a id="d5e879"/><p class="title"><strong>Example 4.6. JPA's AttributeOverride</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Contact {
+	@Id
+	private Integer id;
+	@Embedded
+	private Name name;
+	@Embedded
+	@AttributeOverrides(
+			@AttributeOverride(
+					name="line1",
+					column = @Column(name = "home_address_line1"),
+			),
+			@AttributeOverride(
+					name="line2",
+					column = @Column(name = "home_address_line2")
+			),
+			@AttributeOverride(
+					name="zipCode.postalCode",
+					column = @Column(name = "home_address_postal_cd")
+			),
+			@AttributeOverride(
+					name="zipCode.plus4",
+					column = @Column(name = "home_address_postal_plus4")
+			)
+	)
+	private Address homeAddress;
+	@Embedded
+	@AttributeOverrides(
+			@AttributeOverride(
+					name="line1",
+					column = @Column(name = "mailing_address_line1"),
+			),
+			@AttributeOverride(
+					name="line2",
+					column = @Column(name = "mailing_address_line2")
+			),
+			@AttributeOverride(
+					name="zipCode.postalCode",
+					column = @Column(name = "mailing_address_postal_cd")
+			),
+			@AttributeOverride(
+					name="zipCode.plus4",
+					column = @Column(name = "mailing_address_postal_plus4")
+			)
+	)
+	private Address mailingAddress;
+	@Embedded
+	@AttributeOverrides(
+			@AttributeOverride(
+					name="line1",
+					column = @Column(name = "work_address_line1"),
+			),
+			@AttributeOverride(
+					name="line2",
+					column = @Column(name = "work_address_line2")
+			),
+			@AttributeOverride(
+					name="zipCode.postalCode",
+					column = @Column(name = "work_address_postal_cd")
+			),
+			@AttributeOverride(
+					name="zipCode.plus4",
+					column = @Column(name = "work_address_postal_plus4")
+			)
+	)
+	private Address workAddress;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Now, essentially there are no implicit column names in the Address compositions.  We have explicitly
+                named them.
+            </p>
+        </div>
+
+        <div class="section" title="4.2.2. ImplicitNamingStrategy"><div class="titlepage"><div><div><h3 class="title"><a id="composition-multiple-namingstrategy"/>4.2.2. ImplicitNamingStrategy</h3></div></div></div>
+            
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    This is a Hibernate specific feature.  Users concerned with JPA provider portability should instead
+                    prefer explicit column naming with AttributeOverride as per <a class="xref" href="#composition-multiple-jpa" title="4.2.1. JPA's AttributeOverride">Section 4.2.1, “JPA's AttributeOverride”</a>
+                </p>
+            </div>
+
+            <p>
+                Hibernate naming strategies are covered in detail in <a class="xref" href="#">???</a>.  However, for the purposes
+                of this discussion, Hibernate has the capability to interpret implicit column names in a way that is
+                safe for use with multiple compositions.
+            </p>
+
+            <div class="example"><a id="d5e890"/><p class="title"><strong>Example 4.7. Enabling composition-safe implicit naming</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">MetadataSources sources = ...;
+sources.addAnnotatedClass( Address.class );
+sources.addAnnotatedClass( Name.class );
+sources.addAnnotatedClass( Contact.class );
+
+Metadata metadata = sources.getMetadataBuilder()
+		.applyImplicitNamingStrategy( ImplicitNamingStrategyComponentPathImpl.INSTANCE )
+		...
+		.build();</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Now the "path" to attributes are used in the implicit column naming.
+            </p>
+
+            <div class="example"><a id="d5e894"/><p class="title"><strong>Example 4.8. Enabling composition-safe implicit naming</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table Contact(
+	id integer not null,
+	name_firstName VARCHAR,
+	name_middleName VARCHAR,
+	name_lastName VARCHAR,
+	homeAddress_line1 VARCHAR,
+	homeAddress_line2 VARCHAR,
+	homeAddress_zipCode_postalCode VARCHAR,
+	homeAddress_zipCode_plus4 VARCHAR,
+	mailingAddress_line1 VARCHAR,
+	mailingAddress_line2 VARCHAR,
+	mailingAddress_zipCode_postalCode VARCHAR,
+	mailingAddress_zipCode_plus4 VARCHAR,
+	workAddress_line1 VARCHAR,
+	workAddress_line2 VARCHAR,
+	workAddress_zipCode_postalCode VARCHAR,
+	workAddress_zipCode_plus4 VARCHAR,
+	...
+)</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                You could even develop your own to do special implicit naming.
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="4.3. Collections of compositions"><div class="titlepage"><div><div><h2 class="title"><a id="composition-collections"/>4.3. Collections of compositions</h2></div></div></div>
+        
+        <p>
+            Collections of compositions are specifically value collections (as compositions are a value type).  Value
+            collections are covered in detail in <a class="xref" href="#collections-value" title="5.2. Collections of value types">Section 5.2, “Collections of value types”</a>.
+        </p>
+        <p>
+            The one thing to add to the discussion of value collections in regards to compositions is that
+            the composition cannot, in turn, define collections.
+        </p>
+    </div>
+
+    <div class="section" title="4.4. Compositions as Map key"><div class="titlepage"><div><div><h2 class="title"><a id="composition-mapkey"/>4.4. Compositions as Map key</h2></div></div></div>
+        
+        <p>
+            Compositions can also be used as the key values for Maps.  Mapping Maps and their keys is convered in
+            detail in <a class="xref" href="#">???</a>.
+        </p>
+        <p>
+            Again, compositions used as a Map key cannot, in turn, define collections.
+        </p>
+    </div>
+
+    <div class="section" title="4.5. Compositions as identifiers"><div class="titlepage"><div><div><h2 class="title"><a id="composition-identifier"/>4.5. Compositions as identifiers</h2></div></div></div>
+        
+        <p>
+            Compositions can also be used as entity identifiers.  This usage is covered in detail in
+            <a class="xref" href="#">???</a>
+        </p>
+        <p>
+            Again, compositions used as an entity identifier cannot, in turn, define collections.
+        </p>
+    </div>
+</div>
+    <div xml:lang="en" class="chapter" title="Chapter 5. Collections"><div class="titlepage"><div><div><h2 class="title"><a id="collections"/>Chapter 5. Collections</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#collections-synopsis">5.1. Collections as a value type</a></span></dt><dt><span class="section"><a href="#collections-value">5.2. Collections of value types</a></span></dt><dt><span class="section"><a href="#collections-entity">5.3. Collections of entities</a></span></dt><dt><span class="section"><a href="#collections-list">5.4. List - index</a></span></dt><dt><span class="section"><a href="#collections-map">5.5. Map - key</a></span></dt><dt><span class="section"><a href="#collections-bag">5.6. Bags</a></span></dt><dt><span class="section"><a href="#collections-array">5.7. Arrays</a></span></dt><dt><span class="section"><a href="#collections-as-basic">5.8. Collections as basic value type</a></span></dt></dl></div>
+    
+
+    <div class="section" title="5.1. Collections as a value type"><div class="titlepage"><div><div><h2 class="title"><a id="collections-synopsis"/>5.1. Collections as a value type</h2></div></div></div>
+        
+        <p>
+            discussions of what it means for them to be value types  - lifecycle, opt-locking
+        </p>
+        <p>
+            Collections have the usual behavior of value types.  They are automatically persisted when referenced by
+            a persistent object and are automatically deleted when unreferenced.  If a collection is passed from one
+            persistent object to another, its elements might be moved from one table to another.  Two entities cannot
+            share a reference to the same collection instance.
+        </p>
+        <p>
+            Collection attributes do not support null value semantics; Hibernate does not distinguish between a null
+            collection reference and an empty collection.
+        </p>
+        <p>
+            It is important that collections be defined using the appropriate Java Collections Framework interface
+            rather than a specific implementation.  From a theoretical perspective, this just follows good design
+            principles.  From a practical perspective, Hibernate (really all persistence providers) will use
+            their own collection implementations which conform to the Java Collections Framework interfaces.
+        </p>
+    </div>
+
+    <div class="section" title="5.2. Collections of value types"><div class="titlepage"><div><div><h2 class="title"><a id="collections-value"/>5.2. Collections of value types</h2></div></div></div>
+        
+        <p>
+            collection of values - elements can be of any value type except for collections (in fact even compositions as the element cannot contain collections)
+            * basics
+            * compositions
+        </p>
+    </div>
+
+    <div class="section" title="5.3. Collections of entities"><div class="titlepage"><div><div><h2 class="title"><a id="collections-entity"/>5.3. Collections of entities</h2></div></div></div>
+        
+        <p>
+            * one-to-many
+            * many-to-many
+        </p>
+    </div>
+
+    <div class="section" title="5.4. List - index"><div class="titlepage"><div><div><h2 class="title"><a id="collections-list"/>5.4. List - index</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping list index
+        </p>
+    </div>
+
+    <div class="section" title="5.5. Map - key"><div class="titlepage"><div><div><h2 class="title"><a id="collections-map"/>5.5. Map - key</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping map key
+        </p>
+    </div>
+
+    <div class="section" title="5.6. Bags"><div class="titlepage"><div><div><h2 class="title"><a id="collections-bag"/>5.6. Bags</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping bags and idbags
+        </p>
+    </div>
+
+    <div class="section" title="5.7. Arrays"><div class="titlepage"><div><div><h2 class="title"><a id="collections-array"/>5.7. Arrays</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping arrays
+        </p>
+    </div>
+
+    <div class="section" title="5.8. Collections as basic value type"><div class="titlepage"><div><div><h2 class="title"><a id="collections-as-basic"/>5.8. Collections as basic value type</h2></div></div></div>
+        
+        <p>
+            Notice how all the previous examples explicitly mark the collection attribute as either
+            ElementCollection, OneToMany or ManyToMany.  Collections not marked as such, or collections explicitly
+            maked with @Basic are treated as JPA basic values.  Meaning there value is stored into a single
+            column in the containing table.
+        </p>
+        <p>
+            This is sometimes beneficial.  Consider a use-case such as a VARCHAR column that represents a
+            delimited list or set of Strings.
+        </p>
+        <div class="example"><a id="d5e943"/><p class="title"><strong>Example 5.1. Delimited set of tags</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public static class Post {
+	@Id
+	public Integer id;
+	@Basic
+	@Type( type = "delimited_strings" )
+	Set&lt;String&gt; tags;
+}
+
+
+public static class DelimitedStringsType extends AbstractSingleColumnStandardBasicType&lt;Set&gt; {
+	public DelimitedStringsType() {
+		super(
+				VarcharTypeDescriptor.INSTANCE,
+				new DelimitedStringsJavaTypeDescriptor()
+		);
+	}
+
+	@Override
+	public String getName() {
+		return "delimited_strings";
+	}
+}
+
+public static class DelimitedStringsJavaTypeDescriptor extends AbstractTypeDescriptor&lt;Set&gt; {
+	public DelimitedStringsJavaTypeDescriptor() {
+		super(
+				Set.class,
+				new MutableMutabilityPlan&lt;Set&gt;() {
+					@Override
+					protected Set deepCopyNotNull(Set value) {
+						Set&lt;String&gt; copy = new HashSet&lt;String&gt;();
+						copy.addAll( value );
+						return copy;
+					}
+				}
+		);
+	}
+
+	@Override
+	public String toString(Set value) {
+		return null;
+	}
+
+	@Override
+	public Set fromString(String string) {
+		return null;
+	}
+
+	@Override
+	public &lt;X&gt; X unwrap(Set value, Class&lt;X&gt; type, WrapperOptions options) {
+		return null;
+	}
+
+	@Override
+	public &lt;X&gt; Set wrap(X value, WrapperOptions options) {
+		return null;
+	}
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            See the <em class="citetitle">Hibernate Integrations Guide</em> for more details on developing
+            custom value type mappings.  Without the special type mapping above the "set of tags" would have
+            simply been marshalled using serialization.
+        </p>
+    </div>
+
+</div>
+    
+
+    <div xml:lang="en" class="chapter" title="Chapter 6. Identifiers"><div class="titlepage"><div><div><h2 class="title"><a id="identifiers"/>Chapter 6. Identifiers</h2></div><div><div class="abstract" title="Abstract"><p class="title"><strong>Abstract</strong></p>
+            <p>
+                This chapter discusses the characteristics of entity identifier attributes and modelling
+                them.
+            </p>
+        </div></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#identifiers-simple">6.1. Simple identifiers</a></span></dt><dt><span class="section"><a href="#identifiers-composite">6.2. Composite identifiers</a></span></dt><dd><dl><dt><span class="section"><a href="#identifiers-composite-aggregated">6.2.1. Composite identifiers - aggregated (EmbeddedId)</a></span></dt><dt><span class="section"><a href="#identifiers-composite-nonaggregated">6.2.2. Composite identifiers - non-aggregated (IdClass)</a></span></dt></dl></dd><dt><span class="section"><a href="#identifiers-generators">6.3. Generated identifier values</a></span></dt><dd><dl><dt><span class="section"><a href="#identifiers-generators-auto">6.3.1. Interpreting AUTO</a></span></dt><dt><span class="section"><a href="#identifiers-generators-sequence">6.3.2. Using sequences</a></span></dt><dt><span class="section"><a href="#identifiers-generators-identity">6.3.3. Using IDENTITY columns</a></span></dt><dt><span class="section"><a href="#identifiers-generators-table">6.3.4. Using identifier table</a></span></dt><dt><span class="section"><a href="#identifiers-generators-uuid">6.3.5. Using UUID generation</a></span></dt><dt><span class="section"><a href="#identifiers-generators-generic">6.3.6. Using @GenericGenerator</a></span></dt><dt><span class="section"><a href="#identifiers-generators-optimizer">6.3.7. Optimizers</a></span></dt></dl></dd><dt><span class="section"><a href="#identifiers-derived">6.4. Derived Identifiers</a></span></dt></dl></div>
+
+    
+
+    <p>
+        Identifiers model the primary key of an entity.  They are used to uniquely identify each specific entity.
+    </p>
+
+    <p>
+        Hibernate and JPA both make the following assumptions about the corresponding database column(s):
+        </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                <p>
+                    <code class="literal">UNIQUE</code> - The values must uniquely identify each row.
+                </p>
+            </li><li class="listitem">
+                <p>
+                    <code class="literal">NOT NULL</code> - The values cannot be null.  For composite ids, no part can be null.
+                </p>
+            </li><li class="listitem">
+                <p>
+                    <code class="literal">IMMUTABLE</code> - The values, once inserted, can never be changed.  This is more
+                    a general guide, than a hard-fast rule as opinions vary.  JPA defines the behavior of changing the
+                    value of the identifier attribute to be undefined; Hibernate simply does not support that.  In cases
+                    where the values for the PK you have chosen will be updated, Hibernate recommends mapping the
+                    mutable value as a natural id, and use a surrogate id for the PK.  See <a class="xref" href="#naturalid" title="Chapter 7. Natural Ids">Chapter 7, <em>Natural Ids</em></a>.
+                </p>
+            </li></ul></div><p>
+    </p>
+
+    <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+        <p>
+            Technically the identifier does not have to map to the column(s) physically defined as the entity
+            table's primary key.  They just need to map to column(s) that uniquely identify each row.  However
+            this documentation will continue to use the terms identifier and primary key interchangeably.
+        </p>
+    </div>
+
+    <p>
+        Every entity must define an identifier.  For entity inheritance hierarchies, the identifier must be
+        defined just on the entity that is the root of the hierarchy.
+    </p>
+
+    <p>
+        An identifier might be simple (single value) or composite (multiple values).
+    </p>
+
+    <div class="section" title="6.1. Simple identifiers"><div class="titlepage"><div><div><h2 class="title"><a id="identifiers-simple"/>6.1. Simple identifiers</h2></div></div></div>
+        
+        <p>
+            Simple identifiers map to a single basic attribute, and are denoted using the
+            <code class="interfacename">javax.persistence.Id</code> annotation.
+        </p>
+
+        <p>
+            According to JPA only the following types should be used as identifier attribute types:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>any Java primitive type</p></li><li class="listitem"><p>any primitive wrapper type</p></li><li class="listitem"><p>java.lang.String</p></li><li class="listitem"><p>java.util.Date (TemporalType#DATE)</p></li><li class="listitem"><p>java.sql.Date</p></li><li class="listitem"><p>java.math.BigDecimal</p></li><li class="listitem"><p>java.math.BigInteger</p></li></ul></div><p>
+            Any types used for identifier attributes beyond this list will not be portable.
+        </p>
+
+        <p>
+            Values for simple identifiers can be assigned, as we have seen in the examples above.  The expectation
+            for assigned identifier values is that the application assigns (sets them on the entity attribute) prior
+            to calling save/persist.
+        </p>
+
+        <div class="example"><a id="d5e992"/><p class="title"><strong>Example 6.1. Simple assigned identifier</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	public Integer id;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Values for simple identifiers can be generated.  To denote that an identifier attribute is
+            generated, it is annotated with <code class="interfacename">javax.persistence.GeneratedValue</code>
+        </p>
+
+        <div class="example"><a id="d5e997"/><p class="title"><strong>Example 6.2. Simple generated identifier</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue
+	public Integer id;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Additionally to the type restriction list above, JPA
+            says that if using generated identifier values (see below) only integer types (short, int, long) will be
+            portably supported.
+        </p>
+
+        <p>
+            The expectation for generated identifier values is that Hibernate will generate the value
+            when the save/persist occurs.
+        </p>
+
+        <p>
+            Identifier value generations strategies are discussed in detail in <a class="xref" href="#identifiers-generators" title="6.3. Generated identifier values">Section 6.3, “Generated identifier values”</a>.
+        </p>
+    </div>
+
+    <div class="section" title="6.2. Composite identifiers"><div class="titlepage"><div><div><h2 class="title"><a id="identifiers-composite"/>6.2. Composite identifiers</h2></div></div></div>
+        
+
+        <p>
+            Composite identifiers correspond to one or more persistent attributes.  Here are the rules governing
+            composite identifiers, as defined by the JPA specification.
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        The composite identifier must be represented by a "primary key class".  The primary key class
+                        may be defined using the <code class="interfacename">javax.persistence.EmbeddedId</code> annotation
+                        (see <a class="xref" href="#identifiers-composite-aggregated" title="6.2.1. Composite identifiers - aggregated (EmbeddedId)">Section 6.2.1, “Composite identifiers - aggregated (EmbeddedId)”</a>) or defined using the
+                        <code class="interfacename">javax.persistence.IdClass</code> annotation (see
+                        <a class="xref" href="#identifiers-composite-nonaggregated" title="6.2.2. Composite identifiers - non-aggregated (IdClass)">Section 6.2.2, “Composite identifiers - non-aggregated (IdClass)”</a>).
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The primary key class must be public and must have a public no-arg constructor.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The primary key class must be serializable.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The primary key class must define equals and hashCode methods, consistent with equality for
+                        the underlying database types to which the key is mapped.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                The restriction that a composite identifier has to be represented by a "primary key class" is
+                a JPA restriction.  Hibernate does allow composite identifiers to be defined without a
+                "primary key class", but use of that modeling technique is deprecated and not discussed here.
+            </p>
+        </div>
+
+        <p>
+            The attributes making up the composition can be either basic, composite, ManyToOne.  Note especially
+            that collections and one-to-ones are never appropriate.
+            
+        </p>
+
+        <div class="section" title="6.2.1. Composite identifiers - aggregated (EmbeddedId)"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-composite-aggregated"/>6.2.1. Composite identifiers - aggregated (EmbeddedId)</h3></div></div></div>
+            
+
+            <p>
+                Modelling a composite identifier using an EmbeddedId simply means defining an
+                Embeddable to be a composition for the the one or more attributes making up the
+                identifier and then exposing an attribute of that Embeddable type on the entity.
+            </p>
+
+            <div class="example"><a id="d5e1026"/><p class="title"><strong>Example 6.3. Basic EmbeddedId</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Login {
+	@Embeddable
+	public static class PK implements Serializable  {
+		private String system;
+		private String username;
+		...
+	}
+
+	@EmbeddedId
+	private PK pk;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                As mentioned before, EmbeddedIds can even contain ManyToOne attributes.
+            </p>
+
+            <div class="example"><a id="d5e1030"/><p class="title"><strong>Example 6.4. EmbeddedId with ManyToOne</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Login {
+	@Embeddable
+	public static class PK implements Serializable {
+		@ManyToOne
+		private System system;
+		private String username;
+		...
+	}
+
+	@EmbeddedId
+	private PK pk;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    Hibernate supports directly modeling the ManyToOne in the PK class, whether EmbeddedId or IdClass.
+                    However that is not portably supported by the JPA specification.  In JPA terms one would
+                    use "derived identifiers"; for details, see <a class="xref" href="#identifiers-derived" title="6.4. Derived Identifiers">Section 6.4, “Derived Identifiers”</a>.
+                </p>
+            </div>
+        </div>
+
+        <div class="section" title="6.2.2. Composite identifiers - non-aggregated (IdClass)"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-composite-nonaggregated"/>6.2.2. Composite identifiers - non-aggregated (IdClass)</h3></div></div></div>
+            
+
+            <p>
+                Modelling a composite identifier using an IdClass differs from using an EmbeddedId in that the entity
+                defines each individual attribute making up the composition.  The IdClass simply acts as a "shadow".
+            </p>
+
+            <div class="example"><a id="d5e1039"/><p class="title"><strong>Example 6.5. Basic IdClass</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@IdClass(PK.class)
+public class Login {
+	public static class PK implements Serializable  {
+		private String system;
+		private String username;
+		...
+	}
+
+	@Id
+	private String system;
+	@Id
+	private String username;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Non-aggregated composite identifiers can also contain ManyToOne attributes as we saw with aggregated
+                ones (still non-portably)
+            </p>
+
+            <div class="example"><a id="d5e1043"/><p class="title"><strong>Example 6.6. IdClass with ManyToOne</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@IdClass(PK.class)
+public class Login {
+	public static class PK implements Serializable {
+		private System system;
+		private String username;
+		...
+	}
+
+	@Id
+	@ManyToOne
+	private System system;
+	@Id
+	private String username;
+
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                With non-aggregated composite identifiers, Hibernate also supports "partial" generation of the
+                composite values.
+            </p>
+
+            <div class="example"><a id="d5e1047"/><p class="title"><strong>Example 6.7. IdClass with partial generation</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@IdClass(PK.class)
+public class LogFile {
+	public static class PK implements Serializable {
+		private String name;
+		private LocalDate date;
+		private Integer uniqueStamp;
+		...
+	}
+
+	@Id
+	private String name;
+	@Id
+	private LocalDate date;
+	@Id
+	@GeneratedValue
+	private Integer uniqueStamp;
+	...
+}
+
+</pre>
+            </div></div><br class="example-break"/>
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    This feature exists because of a highly questionable interpretation of the JPA specification
+                    made by the SpecJ committee.  Hibernate does not feel that JPA defines support for this, but
+                    added the feature simply to be usable in SpecJ benchmarks.  Use of this feature may or may not
+                    be portable from a JPA perspective.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="section" title="6.3. Generated identifier values"><div class="titlepage"><div><div><h2 class="title"><a id="identifiers-generators"/>6.3. Generated identifier values</h2></div></div></div>
+        
+
+        
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                For discussion of generated values for non-identifier attributes, see <a class="xref" href="#">???</a>
+            </p>
+        </div>
+
+        <p>
+            Hibernate supports identifier value generation across a number of different types.  Remember
+            that JPA portably defines identifier value generation just for integer types.
+        </p>
+
+        <p>
+            Identifier value generation is indicates using the <code class="interfacename">javax.persistence.GeneratedValue</code>
+            annotation.  The most important piece of information here is the specified
+            <code class="interfacename">javax.persistence.GenerationType</code> which indicates how values will be generated.
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                The discussions below assume that the application is using Hibernate's "new generator mappings" as
+                indicated by the <code class="literal">hibernate.id.new_generator_mappings</code> setting or
+                <code class="methodname">MetadataBuilder.enableNewIdentifierGeneratorSupport</code> method during bootstrap.
+                This is set to true by default, however if applications set this to false the resolutions discussed
+                here will be very different.  The rest of the discussion here assumes this setting is enabled (true).
+            </p>
+        </div>
+
+        <div class="itemizedlist" title="GenerationTypes"><p class="title"><strong>GenerationTypes</strong></p><ul class="itemizedlist"><li class="listitem">
+                <p>
+                    <code class="literal">AUTO</code> (the default) - Indicates that the persistence provider (Hibernate) should
+                    chose an appropriate generation strategy.  See <a class="xref" href="#identifiers-generators-auto" title="6.3.1. Interpreting AUTO">Section 6.3.1, “Interpreting AUTO”</a>.
+                </p>
+            </li><li class="listitem">
+                <p>
+                    <code class="literal">IDENTITY</code> - Indicates that database IDENTITY columns will be used for
+                    primary key value generation.  See <a class="xref" href="#identifiers-generators-identity" title="6.3.3. Using IDENTITY columns">Section 6.3.3, “Using IDENTITY columns”</a>.
+                </p>
+            </li><li class="listitem">
+                <p>
+                    <code class="literal">SEQUENCE</code> - Indicates that database sequence should be used for obtaining
+                    primary key values.   See <a class="xref" href="#identifiers-generators-sequence" title="6.3.2. Using sequences">Section 6.3.2, “Using sequences”</a>.
+                </p>
+            </li><li class="listitem">
+                <p>
+                    <code class="literal">TABLE</code> - Indicates that a database table should be used for obtaining
+                    primary key values.   See <a class="xref" href="#identifiers-generators-table" title="6.3.4. Using identifier table">Section 6.3.4, “Using identifier table”</a>.
+                </p>
+            </li></ul></div>
+
+        <div class="section" title="6.3.1. Interpreting AUTO"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-auto"/>6.3.1. Interpreting AUTO</h3></div></div></div>
+            
+
+            <p>
+                How a persistence provider interprets the AUTO generation type is left up to the provider.  Hibernate
+                interprets it in the following order:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            If the given name matches the name for a <code class="interfacename">javax.persistence.SequenceGenerator</code>
+                            annotation -&gt; <a class="xref" href="#identifiers-generators-sequence" title="6.3.2. Using sequences">Section 6.3.2, “Using sequences”</a>.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            If the given name matches the name for a <code class="interfacename">javax.persistence.TableGenerator</code>
+                            annotation -&gt; <a class="xref" href="#identifiers-generators-table" title="6.3.4. Using identifier table">Section 6.3.4, “Using identifier table”</a>.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            If the given name matches the name for a <code class="interfacename">org.hibernate.annotations.GenericGenerator</code>
+                            annotation -&gt; <a class="xref" href="#identifiers-generators-generic" title="6.3.6. Using @GenericGenerator">Section 6.3.6, “Using @GenericGenerator”</a>.
+                        </p>
+                    </li></ul></div><p>
+                The fallback is to consult with the pluggable <code class="interfacename">org.hibernate.boot.model.IdGeneratorStrategyInterpreter</code>
+                contract, which is covered in detail in the <em class="citetitle">Hibernate Integrations Guide</em>.  The default
+                behavior is to look at the java type of the identifier attribute:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            If it is UUID -&gt; <a class="xref" href="#identifiers-generators-uuid" title="6.3.5. Using UUID generation">Section 6.3.5, “Using UUID generation”</a>
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            Otherwise -&gt; <a class="xref" href="#identifiers-generators-sequence" title="6.3.2. Using sequences">Section 6.3.2, “Using sequences”</a>
+                        </p>
+                    </li></ul></div><p>
+            </p>
+        </div>
+
+        <div class="section" title="6.3.2. Using sequences"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-sequence"/>6.3.2. Using sequences</h3></div></div></div>
+            
+
+            <p>
+                For implementing database sequence-based identifier value generation Hibernate makes use of its
+                <code class="classname">org.hibernate.id.enhanced.SequenceStyleGenerator</code> id generator.  It is important
+                to note that SequenceStyleGenerator is capable of working against databases that do not support sequences
+                by switching to a table as the underlying backing.  This gives Hibernate a huge degree of portability
+                across databases while still maintaining consistent id generation behavior (versus say choosing
+                between sequence and IDENTITY).  This backing storage is completely transparent to the user.
+            </p>
+
+            <p>
+                The preferred (and portable) way to configure this generator is using the JPA-defined
+                <code class="interfacename">javax.persistence.SequenceGenerator</code> annotation.
+            </p>
+
+            <p>
+                The simplest form is to simply request sequence generation; Hibernate will use a single, implicitly-named
+                sequence (<code class="literal">hibernate_sequence</code>) for all such unnamed definitions.
+            </p>
+
+            <div class="example"><a id="d5e1116"/><p class="title"><strong>Example 6.8. Unnamed sequence</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue(generation=SEQUENCE)
+	public Integer id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Or a specifically named sequence can be requested
+            </p>
+
+            <div class="example"><a id="d5e1120"/><p class="title"><strong>Example 6.9. Named sequence</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue(generation=SEQUENCE, name="my_sequence")
+	public Integer id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Use <code class="interfacename">javax.persistence.SequenceGenerator</code> to specify additional configuration.
+            </p>
+
+            <div class="example"><a id="d5e1125"/><p class="title"><strong>Example 6.10. Configured sequence</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue(generation=SEQUENCE, name="my_sequence")
+	@SequenceGenerator( name = "my_sequence", schema = "globals", allocationSize = 30 )
+	public Integer id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            
+        </div>
+
+        <div class="section" title="6.3.3. Using IDENTITY columns"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-identity"/>6.3.3. Using IDENTITY columns</h3></div></div></div>
+            
+
+            <p>
+                For implementing identifier value generation based on IDENTITY columns, Hibernate makes use of its
+                <code class="classname">org.hibernate.id.IdentityGenerator</code> id generator which expects the identifier
+                to generated by INSERT into the table.  IdentityGenerator understands 3 different ways that the
+                INSERT-generated value might be retrieved:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            If Hibernate believes the JDBC environment supports <code class="methodname">java.sql.Statement#getGeneratedKeys</code>,
+                            then that approach will be used for extracting the IDENTITY generated keys.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            Otherwise, if <code class="methodname">Dialect#supportsInsertSelectIdentity</code> reports
+                            true, Hibernate will use the Dialect specific INSERT+SELECT statement syntax.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            Otherwise, Hibernate will expect that the database supports some form of asking
+                            for the most recently inserted IDENTITY value via a separate SQL command as
+                            indicated by <code class="methodname">Dialect#getIdentitySelectString</code>
+                        </p>
+                    </li></ul></div><p>
+            </p>
+
+            <p>
+                It is important to realize that this imposes a runtime behavior where the entity row *must* be
+                physically inserted prior to the identifier value being known.  This can mess up extended persistence
+                contexts (conversations).  Because of the runtime imposition/inconsistency Hibernate suggest other
+                forms of identifier value generation be used.
+            </p>
+
+            <p>
+                There is yet another important runtime impact of choosing IDENTITY generation: Hibernate will not
+                be able to JDBC batching for inserts of the entities that use IDENTITY generation.  The importance
+                of this depends on the application's specific use cases.  If the application is not usually
+                creating many new instances of a given type of entity that uses IDENTITY generation, then
+                this is not an important impact since batching would not have been helpful anyway.
+            </p>
+        </div>
+
+        <div class="section" title="6.3.4. Using identifier table"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-table"/>6.3.4. Using identifier table</h3></div></div></div>
+            
+
+            <p>
+                Hibernate achieves table-based identifier generation based on its
+                <code class="interfacename">org.hibernate.id.enhanced.TableGenerator</code> id generator which defines
+                a table capable of holding multiple named value segments for any number of entities.
+            </p>
+
+            <div class="example"><a id="d5e1148"/><p class="title"><strong>Example 6.11. Table generator table structure</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table hibernate_sequences(
+    sequence_name VARCHAR NOT NULL,
+    next_val INTEGER NOT NULL
+)</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                The basic idea is that a given table-generator table (<code class="literal">hibernate_sequences</code> for example)
+                can hold multiple segments of identifier generation values.
+            </p>
+
+            <div class="example"><a id="d5e1153"/><p class="title"><strong>Example 6.12. Unnamed table generator</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue(generation=TABLE)
+	public Integer id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                If no table name is given Hibernate assumes an implicit name of <code class="literal">hibernate_sequences</code>.
+                Additionally, because no <code class="methodname">javax.persistence.TableGenerator#pkColumnValue</code> is
+                specified, Hibernate will use the default segment (<code class="literal">sequence_name='default'</code>) from the
+                hibernate_sequences table.
+            </p>
+
+            
+        </div>
+
+        <div class="section" title="6.3.5. Using UUID generation"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-uuid"/>6.3.5. Using UUID generation</h3></div></div></div>
+            
+
+            <p>
+                As mentioned above, Hibernate supports UUID identifier value generation.  This is supported through its
+                <code class="classname">org.hibernate.id.UUIDGenerator</code> id generator.
+            </p>
+
+            <p>
+                UUIDGenerator supports pluggable strategies for exactly how the UUID is generated.  These strategies
+                are defined by the <code class="interfacename">org.hibernate.id.UUIDGenerationStrategy</code> contract.
+                The default strategy is a version 4 (random) strategy according to IETF RFC 4122.  Hibernate does ship
+                with an alternative strategy which is a RFC 4122 version 1 (time-based) strategy (using ip address
+                rather than mac address).
+            </p>
+
+            <div class="example"><a id="d5e1166"/><p class="title"><strong>Example 6.13. Implicitly using the random UUID strategy</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue
+	public UUID id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                To specify an alternative generation strategy, we'd have to define some configuration via
+                @GenericGenerator.  Here we choose the RFC 4122 version 1 compliant strategy named
+                <code class="classname">org.hibernate.id.uuid.CustomVersionOneStrategy</code>
+            </p>
+
+            <div class="example"><a id="d5e1171"/><p class="title"><strong>Example 6.14. Implicitly using the random UUID strategy</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class MyEntity {
+	@Id
+	@GeneratedValue( generator="uuid" )
+	@GenericGenerator(
+			name="uuid",
+			strategy="org.hibernate.id.UUIDGenerator",
+			parameters = {
+					@Parameter(
+							name="uuid_gen_strategy_class",
+							value="org.hibernate.id.uuid.CustomVersionOneStrategy"
+					)
+			}
+	)
+	public UUID id;
+	...
+}</pre>
+            </div></div><br class="example-break"/>
+
+        </div>
+
+        <div class="section" title="6.3.6. Using @GenericGenerator"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-generic"/>6.3.6. Using @GenericGenerator</h3></div></div></div>
+            
+            <p>
+                @GenericGenerator allows integration of any Hibernate <code class="interfacename">org.hibernate.id.IdentifierGenerator</code>
+                implementation, including any of the specific ones discussed here and any custom ones.
+            </p>
+        </div>
+
+        <div class="section" title="6.3.7. Optimizers"><div class="titlepage"><div><div><h3 class="title"><a id="identifiers-generators-optimizer"/>6.3.7. Optimizers</h3></div></div></div>
+            
+
+            <p>
+                Most of the Hibernate generators that separately obtain identifier values from database structures
+                support the use of pluggable optimizers.  Optimizers help manage the number of times Hibernate
+                has to talk to the database in order to generate identifier values.  For example, with no optimizer
+                applied to a sequence-generator, everytime the application asked Hibernate to generate an identifier
+                it would need to grab the next sequence value from the database.  But if we can minimize the
+                number of times we need to communicate with the database here, the application will be able to perform
+                better.  Which is in fact the role of these optimizers.
+            </p>
+
+            <div class="variablelist"><dl><dt><span class="term">none</span></dt><dd>
+                        <p>
+                            No optimization is performed.  We communicate with the database each and every time
+                            an identifier value is needed from the generator.
+                        </p>
+                    </dd><dt><span class="term">pooled-lo</span></dt><dd>
+                        <p>
+                            The pooled-lo optimizer works on the principle that the increment-value is encoded into
+                            the database table/sequence structure.  In sequence-terms this means that the sequence
+                            is defined with a greater-that-1 increment size.  For example, consider a brand new sequence
+                            defined as <code class="literal">create sequence my_sequence start with 1 increment by 20</code>.
+                            This sequence essentially defines a "pool" of 20 usable id values each and every time
+                            we ask it for its next-value.  The pooled-lo optimizer interprets the next-value as the
+                            low end of that pool.  So when we first ask it for next-value, we'd get 1.  We then assume
+                            that the valid pool would be the values from 1-20 inclusive.  The next call to
+                            the sequence would result in 21, which would define 21-40 as the valid range.  And so on.
+                            The "lo" part of the name indicates that the value from the database table/sequence is
+                            interpreted as the pool lo(w) end.
+                        </p>
+                    </dd><dt><span class="term">pooled</span></dt><dd>
+                        <p>
+                            Just like pooled-lo, except that here the value from the table/sequence is interpreted
+                            as the high end of the value pool.
+                        </p>
+                    </dd><dt><span class="term">hilo, </span><span class="term">legacy-hilo</span></dt><dd>
+                        <p>
+                            Define a custom algorithm for generating pools of values based on a single value from
+                            a table or sequence.  These optimizers are not recommended for use.  They are maintained
+                            (and mentioned) here simply for use by legacy applications that used these strategies
+                            previously.
+                        </p>
+                    </dd></dl></div>
+
+            <p>
+                Applications can also implement and use their own optimizer strategies, as defined by the
+                <code class="interfacename">org.hibernate.id.enhanced.Optimizer</code> contract.
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="6.4. Derived Identifiers"><div class="titlepage"><div><div><h2 class="title"><a id="identifiers-derived"/>6.4. Derived Identifiers</h2></div></div></div>
+        
+        <p>
+            
+            Ugh...
+        </p>
+    </div>
+</div>
+    <div xml:lang="en" class="chapter" title="Chapter 7. Natural Ids"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid"/>Chapter 7. Natural Ids</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#naturalid-mapping">7.1. Natural Id Mapping</a></span></dt><dt><span class="section"><a href="#naturalid-api">7.2. Natural Id API</a></span></dt><dt><span class="section"><a href="#naturalid-mutability-caching">7.3. Natural Id - Mutability and Caching</a></span></dt></dl></div>
+    
+
+    <p>
+        Natural ids represent unique identifiers that naturally exist within your domain model.  Even if
+        a natural id does not make a good primary key, it still is useful to tell Hibernate about it.
+        As we will see later, Hibernate provides a dedicated, efficient API for loading and entity by its natural-id
+        much like it offers for loading by identifier (PK).
+    </p>
+
+    <div class="section" title="7.1. Natural Id Mapping"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-mapping"/>7.1. Natural Id Mapping</h2></div></div></div>
+        
+
+        <p>
+            Natural ids are defined in terms of one or more persistent attributes.
+        </p>
+
+        <div class="example"><a id="d5e1211"/><p class="title"><strong>Example 7.1. Natural id using single basic attribute</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Company {
+	@Id
+	private Integer id;
+	@NaturalId
+	private String taxIdentifier;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e1214"/><p class="title"><strong>Example 7.2. Natural id using single embedded attribute</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class PostalCarrier {
+	@Id
+	private Integer id;
+	@NaturalId
+	@Embedded
+	private PostalCode postalCode;
+	...
+
+}
+
+@Embeddable
+public class PostalCode {
+	...
+}
+</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e1217"/><p class="title"><strong>Example 7.3. Natural id using multiple persistent attributes</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Course {
+	@Id
+	private Integer id;
+	@NaturalId
+	@ManyToOne
+	private Department department;
+	@NaturalId
+	private String code;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+    </div>
+
+    <div class="section" title="7.2. Natural Id API"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-api"/>7.2. Natural Id API</h2></div></div></div>
+        
+
+        <p>
+            As stated before, Hibernate provides an API for loading entities by natural id.  This is represented by the
+            <code class="interfacename">org.hibernate.NaturalIdLoadAccess</code> contract obtained via
+            <code class="methodname">Session#byNaturalId</code>.  If the entity does not define a natural id, an exception
+            will be thrown there.
+        </p>
+
+        <div class="example"><a id="d5e1225"/><p class="title"><strong>Example 7.4. Using NaturalIdLoadAccess</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Company company = session.byNaturalId( Company.class )
+		.using( "taxIdentifier", "abc-123-xyz" )
+		.load();
+
+PostalCarrier carrier = session.byNaturalId( PostalCarrier.class )
+		.using( "postalCode", new PostalCode( ... ) )
+		.load();
+
+Department department = ...;
+Course course = session.byNaturalId( Course.class )
+		.using( "department", department )
+		.using( "code", "101" )
+		.load();</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            NaturalIdLoadAccess offers 2 distinct methods for obtaining the entity:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        <code class="methodname">load</code> - obtains a reference to the entity, making sure
+                        that the entity state is initialized.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        <code class="methodname">getReference</code> - obtains a reference to the entity.  The state
+                        may or may not be initialized.  If the entity is associated with the Session already,
+                        that reference (loaded or not) is returned; else if the entity supports proxy
+                        generation, an uninitialized proxy is generated and returned; otherwise
+                        the entity is loaded from the database and returned.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            NaturalIdLoadAccess also allows to request locking for the load.  We might use that to load an
+            entity by natural id and at the same time apply a pessimistic lock.  For additional details on locking,
+            see the <em class="citetitle">Hibernate User Guide</em>.
+        </p>
+
+        <p>
+            We will discuss the last method available on NaturalIdLoadAccess
+            (<code class="methodname">setSynchronizationEnabled</code>) in <a class="xref" href="#naturalid-mutability-caching" title="7.3. Natural Id - Mutability and Caching">Section 7.3, “Natural Id - Mutability and Caching”</a>.
+        </p>
+
+        <p>
+            Because the Company and PostalCarrier entities define "simple" natural ids, we also allow simplified
+            access to load them based on the natural ids.
+        </p>
+
+        <div class="example"><a id="d5e1242"/><p class="title"><strong>Example 7.5. Using SimpleNaturalIdLoadAccess</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Company company = session.bySimpleNaturalId( Company.class )
+		.load( "abc-123-xyz" );
+
+PostalCarrier carrier = session.bySimpleNaturalId( PostalCarrier.class )
+		.load( new PostalCode( ... ) );</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Here we see the use of the <code class="interfacename">org.hibernate.SimpleNaturalIdLoadAccess</code>
+            contract, obtained via <code class="methodname">Session#bySimpleNaturalId</code>.  SimpleNaturalIdLoadAccess is similar
+            to NaturalIdLoadAccess except that it does not define the <code class="methodname">using</code> method.  Instead,
+            because these "simple" natural ids are defined based on just one attribute we can directly pass the
+            corresponding value of that natural id attribute directly to the <code class="methodname">load</code>
+            and <code class="methodname">getReference</code> methods.  If the entity does not define a natural id or if the
+            natural id it does define is not simple, an exception will be thrown there.
+        </p>
+    </div>
+
+    <div class="section" title="7.3. Natural Id - Mutability and Caching"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-mutability-caching"/>7.3. Natural Id - Mutability and Caching</h2></div></div></div>
+        
+        <p>
+            A natural id may be mutable or immutable.  By default <code class="literal">@NaturalId</code> marks
+            an immutable natural id.  An immutable natural id is expected to never change values.
+            If the values of the natural id attribute(s) can change, <code class="literal">@NaturalId(mutable=true)</code>
+            should be used instead.
+        </p>
+
+        <div class="example"><a id="d5e1256"/><p class="title"><strong>Example 7.6. Mutable natural id</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	@Id
+	private Integer id;
+	@NaturalId(mutable=true)
+	private String ssn;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Within the Session, Hibernate maintains a mapping from natural id values to pk values.  If natural ids
+            values have changed it is possible for this mapping to become out of date until a flush occurs.  To work
+            around this condition, Hibernate will attempt to discover any such pending changes and adjust for them
+            when the <code class="methodname">load</code> or <code class="methodname">getReference</code> method is executed.  To
+            be clear: this is only pertinent for mutable natural ids.
+        </p>
+
+        <p>
+            This "discovery and adjustment" have a performance impact.  If an application is certain that none of its
+            mutable natural ids already associated with the Session have changed, it can disable that checking by
+            calling <code class="methodname">setSynchronizationEnabled(false)</code> (the default is true).  This will force
+            Hibernate to circumvent the checking of mutable natural ids.
+        </p>
+
+        <div class="example"><a id="d5e1264"/><p class="title"><strong>Example 7.7. Mutable natural id synchronization use-case</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Person person = session.bySimpleNaturalId( Person.class )
+		.load( "123-45-6789" );
+person.setSsn( "987-65-4321" );
+
+...
+
+// returns null!
+person = session.bySimpleNaturalId( Person.class )
+		.setSynchronizationEnabled( false )
+		.load( "987-65-4321" );
+
+// returns correctly!
+person = session.bySimpleNaturalId( Person.class )
+		.setSynchronizationEnabled( true )
+		.load( "987-65-4321" );</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Not only can this NaturalId-to-PK resolution be cached in the Session, but we can also have it cached in
+            the second-level cache if second level caching is enabled.
+        </p>
+
+        <div class="example"><a id="d5e1268"/><p class="title"><strong>Example 7.8. Natural id caching</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@NaturalIdCache
+public class Company {
+	@Id
+	private Integer id;
+	@NaturalId
+	private String taxIdentifier;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+    </div>
+</div>
+
+    
+
+    
+    
+
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/></body></html>
