@@ -10,9 +10,7 @@ public class UpdateService {
 		marketTable = new HashMap<String, Double>();
 		initMarketTable();
 	}
-
 	public void updateTable() {
-
 	}
 
 	public void updateStock(String ticker, double value) {
@@ -20,7 +18,7 @@ public class UpdateService {
 	}
 
 	private void initMarketTable() {
-		marketTable.put("MSFT", 0.00);    //Microsoft
+		    marketTable.put("MSFT", 0.00);    //Microsoft
         marketTable.put("AAPL", 0.00);    //Apple
         marketTable.put("C", 0.00);       //Citigroup
         marketTable.put("GE", 0.00);      //General Electric

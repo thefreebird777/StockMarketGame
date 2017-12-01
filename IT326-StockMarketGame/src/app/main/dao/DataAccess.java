@@ -176,6 +176,7 @@ public class DataAccess implements SQLOperations {
 			
 			pStmnt = getConnection().prepareStatement(sql);
 			pStmnt.setString(1, table);			
+			
 			pStmnt.executeQuery();
 			return 200;
 		} catch(Exception e) {

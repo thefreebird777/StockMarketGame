@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 1. Data categorizations</title><link rel="stylesheet" type="text/css" href="css/hibernate.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><link rel="home" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="up" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="prev" href="pr01.html" title="Preface"/><link rel="next" href="ch02.html" title="Chapter 2. Entity"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="pr01.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="ch02.html"><strong>Next</strong></a></li></ul><div class="chapter" title="Chapter 1. Data categorizations"><div class="titlepage"><div><div><h2 class="title"><a id="categorization"/>Chapter 1. Data categorizations</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="ch01.html#categorization-value">1.1. Value types</a></span></dt><dt><span class="section"><a href="ch01.html#categorization-entity">1.2. Entity Types</a></span></dt><dt><span class="section"><a href="ch01.html#categorization-significance">1.3. Significance of type categories</a></span></dt></dl></div>
+    
+
+    
+
+    <p>
+        Before diving into the actual topics of how to map different categories of things in your domain mode
+        it helps to understand what those categories are.  Hibernate and JPA both express these categorizations.
+    </p>
+
+    <p>
+        Hibernate understands both the Java and JDBC representations of application data.  The ability to read and write
+        the this data to/from the database is the function of a Hibernate <em class="firstterm">type</em>.  A type, in this usage,
+        is an implementation of the <code class="interfacename">org.hibernate.type.Type</code> interface.  This Hibernate
+        type also describes various aspects of behavior of the Java type such as how to check for equality, how to
+        clone values, etc.
+    </p>
+
+    <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Usage of the word <em class="wordasword">type</em></h2>
+        
+        <p>
+            The Hibernate type is neither a Java type nor a SQL datatype.   It provides information about both of these
+            as well as understanding marshalling between.
+        </p>
+        <p>
+            When you encounter the term type in discussions of Hibernate, it may refer to the Java type, the JDBC type,
+            or the Hibernate type, depending on context.
+        </p>
+    </div>
+
+    <p>
+        To help understand these categorizations, lets look at a simple table and domain model that we wish to map.
+    </p>
+
+    <div class="example"><a id="d5e40"/><p class="title"><strong>Example 1.1. Simple table and domain model</strong></p><div class="example-contents">
+        
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table Contact (
+	id INTEGER NOT NULL,
+	first_name VARCHAR,
+	middle_name VARCHAR,
+	last_name VARCHAR,
+	notes VARCHAR,
+	starred BIT,
+	website VARCHAR
+)</pre>
+        <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class Contact {
+	private Integer id;
+	private Name name;
+	private String notes;
+	private URL website;
+	private boolean starred;
+	// getters and setters ommitted
+}
+
+public class Name {
+	private String first;
+	private String middle;
+	private String last;
+	// getters and setters ommitted
+}
+</pre>
+    </div></div><br class="example-break"/>
+
+    <p>
+        In the broadest sense, Hibernate categorizes types into two groups:
+        </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">Value types (<a class="xref" href="ch01.html#categorization-value" title="1.1. Value types">Section 1.1, “Value types”</a>)</li><li class="listitem">Entity types (<a class="xref" href="ch01.html#categorization-entity" title="1.2. Entity Types">Section 1.2, “Entity Types”</a>)</li></ul></div><p>
+    </p>
+
+    <div class="section" title="1.1. Value types"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-value"/>1.1. Value types</h2></div></div></div>
+        
+
+        <p>
+            A value type is a piece of data that does not define its own lifecycle. It is,
+            in effect, owned by an entity, which defines its lifecycle.
+        </p>
+
+        <p>
+            Looked at another way, all the state of an entity is made up entirely of value types.  These
+            state fields or JavaBean-properties are termed <em class="firstterm">persistent attributes</em>.
+            The persistent attributes of the Contact class are value types.
+        </p>
+
+        <p>
+            Value types are further classified into three sub-categories;
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    Basic types - In mapping the Contact table, all attributes except for name would be basic
+                    types.  Basic types are discussed in detail in <a class="xref" href="ch03.html" title="Chapter 3. Basic Types">Chapter 3, <em>Basic Types</em></a>
+                </li><li class="listitem">
+                    Composite (or Embeddable) types - the name attribute is an example of a composite type, which is
+                    discussed in details in <a class="xref" href="">???</a>
+                </li><li class="listitem">
+                    Collection types - the example has no collections.  Collection types are
+                    discussed in <span style="color: red">&lt;ref&gt;&lt;/ref&gt;</span>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="1.2. Entity Types"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-entity"/>1.2. Entity Types</h2></div></div></div>
+        
+
+        <p>
+            Entities are application-specific classes which correlate to rows in a table, using a unique identifier.
+            Because of the requirement for a unique identifier, entities exist independently and define their own
+            lifecycle.  The Contact class itself would be an example of an entity.
+        </p>
+
+        <p>
+            Mapping entities is discussed in detail in <a class="xref" href="ch02.html" title="Chapter 2. Entity">Chapter 2, <em>Entity</em></a>.
+        </p>
+    </div>
+
+    <div class="section" title="1.3. Significance of type categories"><div class="titlepage"><div><div><h2 class="title"><a id="categorization-significance"/>1.3. Significance of type categories</h2></div></div></div>
+        
+        <p>
+            Why do we spend so much time categorizing the various types of types?  What is the significance of the
+            distinction?
+        </p>
+        <p>
+            The main categorization was between entity types and value types.  To review we said that entities, by
+            nature of their unique identifier, exist independently of other objects whereas values do not.  An
+            application cannot "delete" the Contact website; instead, the website is removed when the Contact itself is
+            deleted (obviously you can <span class="emphasis"><em>update</em></span> the website of that website to null to make it
+            "go away", but even there the access is done through the website).
+        </p>
+        <p>
+            Nor can you define an association <span class="emphasis"><em>to</em></span> that Contact website.  You <span class="emphasis"><em>can</em></span>
+            define an association to Contact <span class="emphasis"><em>based on</em></span> its website (assuming website is unique),
+            but that is totally different.
+        </p>
+        <p>
+            equality
+        </p>
+        <p>
+            TBC...
+        </p>
+    </div>
+
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="pr01.html"><strong>Prev</strong>Preface</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li><li class="next"><a accesskey="n" href="ch02.html"><strong>Next</strong>Chapter 2. Entity</a></li></ul></body></html>
