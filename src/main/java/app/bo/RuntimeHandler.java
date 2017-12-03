@@ -1,18 +1,17 @@
 package app.bo;
 
-import app.dao.DataAccess;
+import app.dao.AccountDataAccess;
 import app.exceptions.APIException;
 import app.models.User;
 import app.services.LoginService;
 import app.services.StockAPIService;
-import app.services.StockService;
+import app.services.StockUpdateService;
 import com.google.gson.Gson;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 public class RuntimeHandler implements DataAccessOperations {
-    private static final StockAPIService API_SERVICE = new StockAPIService();
     private static final Gson GSON = new Gson();
     
     public RuntimeHandler() { 
@@ -22,7 +21,7 @@ public class RuntimeHandler implements DataAccessOperations {
     @Override
     public synchronized String select(String json, String objClass, int id) throws APIException {
         try {
-            String returnJSON = GSON.toJson(DataAccess.select(json, id));
+            String returnJSON = GSON.toJson(AccountDataAccess.select(json, id));
             return returnJSON;
         } catch(APIException apiEx) {
             throw apiEx;
@@ -30,10 +29,10 @@ public class RuntimeHandler implements DataAccessOperations {
     }
 
     @Override
-    public synchronized int update(String json, String objClass) throws APIException {
+    public synchronized int saveOrUpdate(String json, String objClass) throws APIException {
         try {
             //convert object
-            return DataAccess.update(json);
+            return AccountDataAccess.saveOrUpdate(json);
         } catch(APIException apiEx) {
             throw apiEx;
         }
@@ -50,7 +49,7 @@ public class RuntimeHandler implements DataAccessOperations {
     }
     
     public synchronized String getStock(String ticker) {
-        String json = GSON.toJson(StockService.getStock(ticker));
+        String json = GSON.toJson(StockUpdateService.getStock(ticker));
         return json;
     }
     
@@ -73,14 +72,14 @@ public class RuntimeHandler implements DataAccessOperations {
      * @throws APIException 
      */
     public synchronized int buyStock(String email, String ticker, int quantity) throws APIException {
-        User user = (User)DataAccess.select(email, 0);
-        double price = StockService.getStock(ticker).price;
+        User user = (User)AccountDataAccess.select(email, 0);
+        double price = StockUpdateService.getStock(ticker).price;
         
         try {
             //checks if a user has sufficient funds AND the market is open
             if(checkFunds(user.getFunds(), price, quantity) && verifyMarketOpen()) {
                 double totalCost = (quantity * price);
-                return DataAccess.update(user); //updates user's account w/ new stock
+                return AccountDataAccess.saveOrUpdate(user); //updates user's account with new stock(s)
             } else {
                 return 401; //not allowed to buy (un-authorized)
             }  
@@ -90,7 +89,7 @@ public class RuntimeHandler implements DataAccessOperations {
     }
     
     /**
-     * Removes 
+     * Removes a stock from a user's account
      * @param email
      * @param ticker
      * @param quantity - number of shares to remove
@@ -110,9 +109,9 @@ public class RuntimeHandler implements DataAccessOperations {
         while(true) {
             if(count == 600000) {
                 if(verifyMarketOpen()) {
-            
+                    //call APIService and update prices
                 }
-                count = 0; //resets internal ms count
+                count = 0; //resets internal milli count
             } else {
                 count++;
             }
