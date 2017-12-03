@@ -13,10 +13,9 @@ import java.util.TimeZone;
 
 public class RuntimeHandler implements DataAccessOperations {
     private static final Gson GSON = new Gson();
+    private static final StockAPIService API_SERVICE = new StockAPIService();
     
-    public RuntimeHandler() { 
-        updateStocks();
-    }
+    public RuntimeHandler() {}
 
     @Override
     public synchronized String select(String json, String objClass, int id) throws APIException {
@@ -101,22 +100,22 @@ public class RuntimeHandler implements DataAccessOperations {
         return 0;
     }
     
-    /**
-     * Automatically updates the internal stock table every 10 min
-     */
-    private static void updateStocks() {
-        long count = 0;
-        while(true) {
-            if(count == 600000) {
-                if(verifyMarketOpen()) {
-                    //call APIService and update prices
-                }
-                count = 0; //resets internal milli count
-            } else {
-                count++;
-            }
-        }
-    }
+//    /**
+//     * Automatically updates the internal stock table every 10 min
+//     */
+//    private static void updateStocks() {
+//        long count = 0;
+//        while(true) {
+//            if(count == 600000) {
+//                if(verifyMarketOpen()) {
+//                    //call APIService and update prices
+//                }
+//                count = 0; //resets internal milli count
+//            } else {
+//                count++;
+//            }
+//        }
+//    }
     
     /**
      * Helper method that checks if a user can afford a specified stock
