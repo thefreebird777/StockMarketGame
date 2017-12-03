@@ -18,7 +18,8 @@ public class StockAPIService {
     private String URL = "www.alphavantage.co";
     private String  KEY = "&interval=1min&apikey=T43MK3VWRNJ7TNH8";
     private String QUERY = "/query?function=TIME_SERIES_INTRADAY&symbol=";
-    private UpdateService STOCK_SERVICE = new UpdateService();
+    private StockUpdateService STOCK_SERVICE = new StockUpdateService();
+
     private String [] tickerList = {"MSFT","AAPL","C","GE","GOOGL","BAC","INTC","MU",
     "F","AXP","BA","CAT","CVX","CSCO","KO","DIS","XOM","GS","HD","IBM","JNJ","JPM","MCD",
     "MRK","NKE","PFE","PG","TRV","UTX","UNH","VZ","V","WMT","AMZN","FB","BABA","BRK-A","WFC",
@@ -102,3 +103,4 @@ public class StockAPIService {
         return 0;
     }
 }
+

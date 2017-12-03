@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="app.models.Stock" table="STOCK" catalog="app">
+        <id name="id" type="integer">
+            <column name="ID" />
+            <generator class="identity" />
+        </id>
+        <property name="ticker" type="string">
+            <column name="TICKER" length="5"/>
+        </property>
+        <property name="price" type="double">
+            <column name="PRICE" />
+        </property>
+    </class>
+</hibernate-mapping>
