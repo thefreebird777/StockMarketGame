@@ -25,7 +25,7 @@ public class StockApiServiceImpl extends StockApiService {
     public Response stockActionGet( @NotNull String ticker, SecurityContext securityContext) throws APIException {
         try {
             Stock stock = HANDLER.getStock(ticker);
-            return Response.ok().entity(stock).build();
+            return Response.ok().entity(GSON.toJson(stock)).build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
         } catch (Exception e) {

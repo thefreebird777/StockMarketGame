@@ -99,7 +99,7 @@ public class UserApiServiceImpl extends UserApiService {
     public Response userPost(String json, SecurityContext securityContext) throws APIException {
         try {
             User newUser = GSON.fromJson(json, User.class);
-            HANDLER.add(json, "User");
+            HANDLER.add(newUser, "User");
             return Response.ok().build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
