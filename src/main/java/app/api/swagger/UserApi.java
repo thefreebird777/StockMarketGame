@@ -1,6 +1,7 @@
 package app.api.swagger;
 
 import app.api.factories.UserApiServiceFactory;
+import app.exceptions.APIException;
 import app.models.User;
 import io.swagger.annotations.ApiParam;
 import javax.servlet.ServletConfig;
@@ -37,8 +38,7 @@ public class UserApi  {
    }
 
     @DELETE
-    @Path("/{email}")
-    
+    @Path("/{email}")    
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Delete a user", notes = "", response = Response.class, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -51,12 +51,11 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response userEmailDelete(@ApiParam(value = "User's email [ID]",required=true) @PathParam("email") String email
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.userEmailDelete(email,securityContext);
     }
     @GET
-    @Path("/{email}")
-    
+    @Path("/{email}")    
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Fetches a user by email", notes = "", response = Response.class, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = { 
@@ -69,7 +68,7 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response userEmailGet(@ApiParam(value = "User's email [ID]",required=true) @PathParam("email") String email
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.userEmailGet(email,securityContext);
     }
     @PUT
@@ -86,9 +85,9 @@ public class UserApi  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response userEmailPut(@ApiParam(value = "User's email [ID]",required=true) @PathParam("email") String email
-,@ApiParam(value = "JSON user object with updated info" ,required=true) User body
+,@ApiParam(value = "JSON user object with updated info" ,required=true) String body
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.userEmailPut(email,body,securityContext);
     }
     @GET
@@ -105,7 +104,7 @@ public class UserApi  {
     public Response userLoginGet(@ApiParam(value = "User's email [ID]",required=true) @QueryParam("email") String email
 ,@ApiParam(value = "User password",required=true) @QueryParam("password") String password
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.userLoginGet(email,password,securityContext);
     }
     @POST
@@ -119,9 +118,9 @@ public class UserApi  {
         @io.swagger.annotations.ApiResponse(code = 401, message = "Bad request", response = Response.class),
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
-    public Response userPost(@ApiParam(value = "Object with User information" ,required=true) User body
+    public Response userPost(@ApiParam(value = "Object with User information" ,required=true) String body
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.userPost(body,securityContext);
     }
 }

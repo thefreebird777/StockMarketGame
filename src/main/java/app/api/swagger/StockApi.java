@@ -1,6 +1,7 @@
 package app.api.swagger;
 
 import app.api.factories.StockApiServiceFactory;
+import app.exceptions.APIException;
 import io.swagger.annotations.ApiParam;
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Context;
@@ -50,7 +51,7 @@ public class StockApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response stockActionGet(@ApiParam(value = "Specified ticker name [ID]",required=true) @QueryParam("ticker") String ticker
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.stockActionGet(ticker,securityContext);
     }
     @POST
@@ -70,7 +71,7 @@ public class StockApi  {
 ,@ApiParam(value = "Number of shares to be added",required=true, defaultValue="1") @DefaultValue("1") @QueryParam("shares") Integer shares
 ,@ApiParam(value = "User's email",required=true) @QueryParam("email") String email
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.stockActionPost(ticker,shares,email,securityContext);
     }
 }

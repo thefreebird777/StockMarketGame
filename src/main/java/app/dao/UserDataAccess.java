@@ -1,27 +1,26 @@
 package app.dao;
 
-import app.bo.DataAccessOperations;
 import app.exceptions.APIException;
 
-public class UserDataAccess implements DataAccessOperations {
+public class UserDataAccess extends DataAccessOperations {
 
     @Override
-    public String select(String json, String objClass, int id) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Object select(Object json, int id) throws APIException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int saveOrUpdate(String json, String objClass) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int saveOrUpdate(Object json) throws APIException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int remove(String json, String objClass) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int add(Object obj) throws APIException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int put(String json, String objClass) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int remove(Object json) throws APIException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -1,6 +1,7 @@
 package app.api.swagger;
 
 import app.api.factories.LeagueApiServiceFactory;
+import app.exceptions.APIException;
 import app.models.League;
 import io.swagger.annotations.ApiParam;
 import javax.servlet.ServletConfig;
@@ -50,7 +51,7 @@ public class LeagueApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response leagueActionGet(@ApiParam(value = "Specified league ID",required=true) @QueryParam("leagueID") String leagueID
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.leagueActionGet(leagueID,securityContext);
     }
     
@@ -69,7 +70,7 @@ public class LeagueApi  {
     public Response leagueActionPost(@ApiParam(value = "Specified league ID",required=true) @QueryParam("leagueID") String leagueID
 ,@ApiParam(value = "Specified user email",required=true) @QueryParam("email") String email
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.leagueActionPost(leagueID,email,securityContext);
     }
     
@@ -87,9 +88,9 @@ public class LeagueApi  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response leagueActionPut(@ApiParam(value = "League's ID",required=true) @QueryParam("leagueID") String leagueID
-,@ApiParam(value = "JSON league object with updated info (i.e. name)" ,required=true) League body
+,@ApiParam(value = "JSON league object with updated info (i.e. name)" ,required=true) String body
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.leagueActionPut(leagueID,body,securityContext);
     }
     @DELETE
@@ -107,7 +108,7 @@ public class LeagueApi  {
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response leagueEmailDelete(@ApiParam(value = "User's email [ID]",required=true) @PathParam("email") String email
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.leagueEmailDelete(email,securityContext);
     }
     @POST
@@ -124,9 +125,9 @@ public class LeagueApi  {
         
         @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Response.class) })
     public Response leagueEmailPost(@ApiParam(value = "User's email [ID]",required=true) @PathParam("email") String email
-,@ApiParam(value = "order placed for purchasing the pet" ,required=true) League body
+,@ApiParam(value = "order placed for purchasing the pet" ,required=true) String body
 ,@Context SecurityContext securityContext)
-    throws NotFoundException {
+    throws APIException {
         return delegate.leagueEmailPost(email,body,securityContext);
     }
 }
