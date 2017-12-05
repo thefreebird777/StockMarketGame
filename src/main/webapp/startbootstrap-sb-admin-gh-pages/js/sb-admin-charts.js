@@ -55,14 +55,14 @@ var myLineChart = new Chart(ctx, {
 // -- Bar Chart Example
 var ctx = document.getElementById("myBarChart");
 var myLineChart = new Chart(ctx, {
-  type: 'bar',
+  type: 'line',
   data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: ["11/30", "12/1", "12/2", "12/3", "12/4", "12/5"],
     datasets: [{
       label: "Revenue",
-      backgroundColor: "rgba(2,117,216,1)",
+      backgroundColor: "rgba(2,117,216,0.2)",
       borderColor: "rgba(2,117,216,1)",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
+      data: [100000, 86335, 86335, 86335, 92033, 92033],
     }],
   },
   options: {
@@ -80,8 +80,8 @@ var myLineChart = new Chart(ctx, {
       }],
       yAxes: [{
         ticks: {
-          min: 0,
-          max: 15000,
+          min: -500000,
+          max: 500000,
           maxTicksLimit: 5
         },
         gridLines: {
