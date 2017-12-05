@@ -33,16 +33,10 @@
                     <span class="nav-link-text">Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-                <a class="nav-link" href="charts.html">
-                    <i class="fa fa-fw fa-area-chart"></i>
-                    <span class="nav-link-text">Charts</span>
-                </a>
-            </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="League">
                 <a class="nav-link" href="tables.html">
-                    <i class="fa fa-fw fa-table"></i>
-                    <span class="nav-link-text">Tables</span>
+                    <i class="fa fa-fw fa-area-chart"></i>
+                    <span class="nav-link-text">League</span>
                 </a>
             </li>
             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
@@ -216,6 +210,50 @@
             </li>
             <li class="breadcrumb-item active">My Dashboard</li>
         </ol>
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i> Current Holdings</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Date of Trade</th>
+                            <th>Initial Price</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Date of Trade</th>
+                            <th>Initial Price</th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
+                        <tr>
+                            <td>MSFT</td>
+                            <td>Buy</td>
+                            <td>100</td>
+                            <td>12/4/2017</td>
+                            <td>$45.55</td>
+                        </tr>
+                        <tr>
+                            <td>F</td>
+                            <td>Short Sell</td>
+                            <td>500</td>
+                            <td>12/1/2017</td>
+                            <td>$12.60</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <!-- Example Bar Chart Card-->
         <div class="card mb-3">
             <div class="card-header">
@@ -235,7 +273,6 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
         </div>
         <!-- Example DataTables Card-->
         <div class="card mb-3">
@@ -289,11 +326,18 @@
                             <td>$46.25</td>
                             <td>$13,875</td>
                         </tr>
+                        <tr>
+                            <td>12/1/2017</td>
+                            <td>Short Sell</td>
+                            <td>F</td>
+                            <td>500</td>
+                            <td>$12.60</td>
+                            <td>$6,300</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
         </div>
         <!-- Area Chart Example-->
         <div class="card mb-3">
@@ -302,21 +346,11 @@
             <div class="card-body">
                 <canvas id="myAreaChart" width="100%" height="30"></canvas>
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
         </div>
         <div class="row">
             <div class="col-lg-8">
             </div>
             <div class="col-lg-4">
-                <!-- Example Pie Chart Card-->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <i class="fa fa-pie-chart"></i> Pie Chart Example</div>
-                    <div class="card-body">
-                        <canvas id="myPieChart" width="100%" height="100"></canvas>
-                    </div>
-                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-                </div>
                 <!-- Example Notifications Card-->
                 <div class="card mb-3">
                     <div class="card-header">
@@ -365,7 +399,6 @@
                         </a>
                         <a class="list-group-item list-group-item-action" href="#">View all activity...</a>
                     </div>
-                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                 </div>
             </div>
         </div>
