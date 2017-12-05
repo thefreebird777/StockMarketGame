@@ -1,7 +1,6 @@
 package app.dao;
 
 import app.exceptions.APIException;
-import org.hibernate.HibernateException;
 import org.hibernate.HibernateUtil;
 import org.hibernate.Session;
 
@@ -25,11 +24,9 @@ public class LeagueDataAccess extends DataAccessOperations {
     public synchronized Object select(Object element, String id) throws APIException {
         try {
             return session.get(element, id);
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
-        }          
+        }         
     }
     
     /**
@@ -44,8 +41,6 @@ public class LeagueDataAccess extends DataAccessOperations {
         try {
             session.saveOrUpdate(element, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         }    
@@ -63,11 +58,9 @@ public class LeagueDataAccess extends DataAccessOperations {
         try {
             session.add(obj, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
-        }    
+        }     
     }
 
     /**
@@ -82,8 +75,6 @@ public class LeagueDataAccess extends DataAccessOperations {
         try {
             session.remove(obj, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         }    

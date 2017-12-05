@@ -1,8 +1,8 @@
 package app.services;
 
 import app.exceptions.APIException;
-import app.models.Stock;
 import java.util.HashMap;
+import org.hibernate.models.Stock;
 
 public class StockService {
 

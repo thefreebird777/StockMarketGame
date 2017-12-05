@@ -1,9 +1,8 @@
 package org.hibernate.models;
 
-import app.models.*;
 import java.util.ArrayList;
 
-public class League implements DefaultInterface {
+public class League {
   
     private String leagueID;
     private String leagueName;

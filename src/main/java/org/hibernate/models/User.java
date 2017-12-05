@@ -1,8 +1,6 @@
 package org.hibernate.models;
 
-import app.models.*;
-
-public class User implements DefaultInterface {
+public class User {
 
     private String email;
     private String password;

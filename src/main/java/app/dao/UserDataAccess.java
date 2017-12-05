@@ -2,7 +2,6 @@ package app.dao;
 
 import app.exceptions.APIException;
 import org.hibernate.models.User;
-import org.hibernate.HibernateException;
 import org.hibernate.HibernateUtil;
 import org.hibernate.Session;
 
@@ -26,8 +25,6 @@ public class UserDataAccess extends DataAccessOperations {
     public synchronized User select(Object element, String id) throws APIException {
         try {
             return (User)session.get(element, id);
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         }          
@@ -45,8 +42,6 @@ public class UserDataAccess extends DataAccessOperations {
         try {
             session.saveOrUpdate(obj, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         }    
@@ -64,8 +59,6 @@ public class UserDataAccess extends DataAccessOperations {
         try {
             session.add(obj, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         }    
@@ -83,11 +76,9 @@ public class UserDataAccess extends DataAccessOperations {
         try {
             session.remove(obj, id);
             return 200;
-        } catch (HibernateException he) {
-            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
             throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
-        }    
+        }  
     }
     
     public boolean verifyUserCredentials(String email, String password) throws APIException {

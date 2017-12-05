@@ -1,6 +1,5 @@
 package org.hibernate.models;
 
-import app.models.*;
 import java.util.HashMap;
 
 public class Account {

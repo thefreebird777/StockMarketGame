@@ -475,14 +475,3 @@ definitions:
     properties:
       acctID:
         type: "string"
-
-  Response:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      body:
-        type: "string"
-      message:
-        type: "string"
