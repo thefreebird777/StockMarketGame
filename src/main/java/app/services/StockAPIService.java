@@ -17,7 +17,7 @@ public class StockAPIService {
     private static final String URL = "www.alphavantage.co";
     private static final String  KEY = "&interval=1min&apikey=T43MK3VWRNJ7TNH8";
     private static final String QUERY = "/query?function=TIME_SERIES_INTRADAY&symbol=";
-    private static final InternalStockManagementService STOCK_SERVICE = new InternalStockManagementService();
+    private static final StockService STOCK_SERVICE = new StockService();
     private static final ScheduledExecutorService EXEC = Executors.newScheduledThreadPool(1);    
     private static final String[] tickerList = {"MSFT","AAPL","C","GE","GOOGL",
         "BAC","INTC","MU","F","AXP","BA","CAT","CVX","CSCO","KO","DIS","XOM","GS",

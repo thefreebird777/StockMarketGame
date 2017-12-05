@@ -6,10 +6,11 @@ import app.dao.LeagueDataAccess;
 import app.dao.UserDataAccess;
 import app.exceptions.APIException;
 import app.models.Stock;
-import app.models.User;
 import app.services.LoginService;
 import app.services.StockAPIService;
-import app.services.InternalStockManagementService;
+import org.hibernate.models.Account;
+import org.hibernate.models.User;
+import app.services.StockService;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -41,7 +42,7 @@ public class RuntimeHandler {
      * @return - Database object
      * @throws APIException 
      */
-    public synchronized Object select(Object obj, String objClass, int id) throws APIException {
+    public synchronized Object select(Object obj, String objClass, String id) throws APIException {
         try {
             DataAccessOperations dao = selectDAO(objClass);
             Object fetched = dao.select(obj, id);
@@ -58,10 +59,10 @@ public class RuntimeHandler {
      * @return - HTTP status
      * @throws APIException 
      */
-    public synchronized int saveOrUpdate(Object obj, String objClass) throws APIException {
+    public synchronized int saveOrUpdate(Object obj, String objClass, String id) throws APIException {
         try {
             DataAccessOperations dao = selectDAO(objClass);    
-            return dao.saveOrUpdate(obj);
+            return dao.saveOrUpdate(obj, id);
         } catch(APIException apiEx) {
             throw apiEx;
         } catch(Exception e) {
@@ -76,10 +77,10 @@ public class RuntimeHandler {
      * @return - HTTP status
      * @throws APIException 
      */
-    public synchronized int add(Object obj, String objClass) throws APIException {
+    public synchronized int add(Object obj, String objClass, String id) throws APIException {
         try {
             DataAccessOperations dao = selectDAO(objClass); 
-            return dao.add(obj);
+            return dao.add(obj, id);
         } catch(APIException apiEx) {
             throw apiEx;
         } catch(Exception e) {
@@ -94,10 +95,10 @@ public class RuntimeHandler {
      * @return - HTTP status
      * @throws APIException 
      */
-    public synchronized int remove(Object obj, String objClass) throws APIException {
+    public synchronized int remove(Object obj, String objClass, String id) throws APIException {
         try {
             DataAccessOperations dao = selectDAO(objClass); 
-            return dao.remove(obj);
+            return dao.remove(obj, id);
         } catch(APIException apiEx) {
             throw apiEx;
         } catch(Exception e) {
@@ -114,8 +115,7 @@ public class RuntimeHandler {
      */
     public synchronized String login(String email, String password) throws APIException {
         try {
-            User user = (User)USER_DAO.select(email, 0);
-            if(user.getEmail().equals(email) && user.getPassword().equals(password))
+            if(USER_DAO.verifyUserCredentials(email, password))
                 return LoginService.generateJWT();
             else
                 throw new APIException(401, "Invalid login credentials", "");
@@ -134,7 +134,7 @@ public class RuntimeHandler {
      */
     public synchronized Stock getStock(String ticker) throws APIException {
         try {
-            return InternalStockManagementService.getStock(ticker);
+            return StockService.getStock(ticker);
         } catch(APIException apiEx) {
             throw apiEx;
         } catch(Exception e) {
@@ -152,17 +152,22 @@ public class RuntimeHandler {
      */
     public synchronized int buyStock(String email, String ticker, int quantity) throws APIException {
        try {
-            User user = (User)USER_DAO.select(email, 0);
-            double price = InternalStockManagementService.getStock(ticker).price;
+            User user = USER_DAO.select(new User(), email);
+            double price = StockService.getStock(ticker).price;
             
             //checks if a user has sufficient funds AND the market is open
             if(checkFunds(user.getFunds(), price, quantity) && verifyMarketOpen()) {
                 double totalCost = (quantity * price);
                 user.setFunds((user.getFunds() - totalCost));
                 
-                // add stock + shares to account
+                Account tempAcct = USER_DAO
+                        .select(user.getAccount(), user.getAccount().getAcctID())
+                        .getAccount();
+                Stock tempStock = new Stock(ticker, StockService.getStock(ticker).price, quantity);
+                tempAcct.addStock(ticker, tempStock);
+                user.setAccount(tempAcct);
                 
-                return USER_DAO.saveOrUpdate(user); //updates user's account with new stock(s)
+                return USER_DAO.saveOrUpdate(user, email); //updates user's account with new stock(s)
             } else {
                 if(checkFunds(user.getFunds(), price, quantity) == false)
                     throw new APIException(403, "Forbidden operation - insufficient funds", "");

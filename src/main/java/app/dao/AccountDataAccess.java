@@ -1,21 +1,34 @@
 package app.dao;
 
-import app.db.HibernateUtil;
+import org.hibernate.Session;
 import app.exceptions.APIException;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.HibernateUtil;
+import org.hibernate.models.Account;
 
-public class AccountDataAccess extends DataAccessOperations {
+public class AccountDataAccess extends DataAccessOperations {      
     
-    private static final HibernateUtil DB_CLIENT = new HibernateUtil();   
+    private static final HibernateUtil DB_CLIENT = new HibernateUtil();
+    private static Session session;
     
-    public AccountDataAccess() {}
+    /**
+     * Default constructor
+     */
+    public AccountDataAccess() {
+        session = DB_CLIENT.getSessionFactory().openSession();
+    }
     
+    /**
+     * Gets an account object from the database using an email ID
+     * @param element - 
+     * @param id - user's email
+     * @return - Account object
+     * @throws APIException 
+     */
     @Override
-    public synchronized Object select(Object element, int id) throws APIException {
+    public synchronized Account select(Object element, String id) throws APIException {
         try {
-            Session session = DB_CLIENT.getSessionFactory().openSession();
-            return session.get(element.getClass(), id);
+            return (Account)session.get(element, id);
         } catch (HibernateException he) {
             throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
         } catch (Exception e) {
@@ -23,11 +36,17 @@ public class AccountDataAccess extends DataAccessOperations {
         }          
     }
     
+    /**
+     * Updates an account based off a user account
+     * @param element
+     * @param id - object table id
+     * @return - HTTP status
+     * @throws APIException 
+     */
     @Override
-    public synchronized int saveOrUpdate(Object element) throws APIException {
+    public synchronized int saveOrUpdate(Object element, String id) throws APIException {
         try {
-            Session session = DB_CLIENT.getSessionFactory().openSession();
-            session.saveOrUpdate(element);
+            session.saveOrUpdate(element, id);
             return 200;
         } catch (HibernateException he) {
             throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
@@ -36,13 +55,41 @@ public class AccountDataAccess extends DataAccessOperations {
         }    
     }
 
+    /**
+     * Adds an account to the table
+     * @param obj - Account object
+     * @param id - object table id
+     * @return - HTTP status
+     * @throws APIException 
+     */
     @Override
-    public int add(Object obj) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int add(Object obj, String id) throws APIException {
+        try {
+            session.add(obj, id);
+            return 200;
+        } catch (HibernateException he) {
+            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
+        } catch (Exception e) {
+            throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
+        }    
     }
 
+    /**
+     * Removes an account from the table
+     * @param obj - Account object
+     * @param id - object table id
+     * @return - HTTP status
+     * @throws APIException 
+     */
     @Override
-    public int remove(Object json) throws APIException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int remove(Object obj, String id) throws APIException {
+        try {
+            session.remove(obj, id);
+            return 200;
+        } catch (HibernateException he) {
+            throw new APIException(500, he.getMessage(), "src/main/java/app/dao/DataAccess.select()");
+        } catch (Exception e) {
+            throw new APIException(500, e.getMessage(), "src/main/java/app/dao/DataAccess.select()");
+        }    
     }
 }

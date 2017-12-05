@@ -1,42 +1,39 @@
 package app.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="STOCK")
-public class Stock implements DefaultInterface {
+//@Entity
+//@Table(name="STOCK")
+public class Stock {
     
         public Stock() {}
     
-        public Stock(int id, String ticker, double price) {
-            this.id = id;
-            this.ticker = ticker;
-            this.price = price;
-        }
-        
         public Stock(String ticker, double price) {
             this.ticker = ticker;
             this.price = price;
+            this.shares = 0;
+        }
+        
+        public Stock(String ticker, double price, int shares) {
+            this.ticker = ticker;
+            this.price = price;
+            this.shares = shares;
         }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	@Column(name="ID")
-	public int id;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	public int id;
 	
-	@Column(name="TICKER")
+//	@Column(name="TICKER")
 	public String ticker;
 	
-	@Column(name="PRICE")
+//	@Column(name="PRICE")
 	public double price;
+        
+        public int shares;
 	
 	public String getTicker() { return ticker; }
 	public void setTicker(String ticker) { this.ticker = ticker; }
 	public double getValue() { return price; }
 	public void setValue(double value) { this.price = value; }
+        public int getShares() { return shares; }
+	public void setShares(int shares) { this.shares = shares; }
 }

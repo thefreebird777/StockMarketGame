@@ -207,6 +207,33 @@
             <version>3.2.0</version>
         </dependency>
         
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.5</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>hibernate-annotations</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.3.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.3.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>derby</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -216,6 +243,16 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        
+        <repository>
+            <id>JBoss repository</id>
+            <url>http://repository.jboss.com/maven2/</url>
+        </repository>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
         </repository>
     </repositories>
 

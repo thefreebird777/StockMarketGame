@@ -10,6 +10,6 @@ public abstract class LeagueApiService {
     public abstract Response leagueActionGet( @NotNull String leagueID,SecurityContext securityContext) throws APIException;
     public abstract Response leagueActionPost( @NotNull String leagueID, @NotNull String email,SecurityContext securityContext) throws APIException;
     public abstract Response leagueActionPut( @NotNull String leagueID,String body,SecurityContext securityContext) throws APIException;
-    public abstract Response leagueEmailDelete(String email,SecurityContext securityContext) throws APIException;
+    public abstract Response leagueActionDelete(String email,String leagueID,SecurityContext securityContext) throws APIException;
     public abstract Response leagueEmailPost(String email,String body,SecurityContext securityContext) throws APIException;
 }

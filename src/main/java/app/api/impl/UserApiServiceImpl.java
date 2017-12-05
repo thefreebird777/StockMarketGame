@@ -3,11 +3,12 @@ package app.api.impl;
 import app.api.swagger.UserApiService;
 import app.bo.RuntimeHandler;
 import app.exceptions.APIException;
-import app.models.User;
 import com.google.gson.Gson;
 import javax.ws.rs.core.Response;
+import org.hibernate.models.User;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
+
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-12-03T01:25:03.125Z")
 public class UserApiServiceImpl extends UserApiService {    
@@ -23,7 +24,7 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response userEmailDelete(String email, SecurityContext securityContext) throws APIException {
         try {
-            HANDLER.remove(email, "User");
+            HANDLER.remove(new User(), "User", email);
             return Response.ok().build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
@@ -41,7 +42,7 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response userEmailGet(String email, SecurityContext securityContext) throws APIException {    
         try {
-            User user = (User)HANDLER.select(email, "user", 0);
+            User user = (User)HANDLER.select(new User(), "user", email);
             return Response.ok().entity(GSON.toJson(user)).build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
@@ -61,7 +62,7 @@ public class UserApiServiceImpl extends UserApiService {
     public Response userEmailPut(String email, String json, SecurityContext securityContext) throws APIException {
         try {
             User user = GSON.fromJson(json, User.class);
-            HANDLER.saveOrUpdate(user, "User");
+            HANDLER.saveOrUpdate(user, "User", user.getEmail());
             return Response.ok().build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
@@ -99,7 +100,7 @@ public class UserApiServiceImpl extends UserApiService {
     public Response userPost(String json, SecurityContext securityContext) throws APIException {
         try {
             User newUser = GSON.fromJson(json, User.class);
-            HANDLER.add(newUser, "User");
+            HANDLER.add(newUser, "User", newUser.getEmail());
             return Response.ok().build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
