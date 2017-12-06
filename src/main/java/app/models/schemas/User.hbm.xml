@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="app.models.User" table="USER" catalog="app">
+        <id name="email" type="string">
+            <column name="EMAIL" />
+        </id>
+        <property name="password" type="string">
+            <column name="PASSWORD" length="25"/>
+        </property>
+        <property name="firstName" type="string">
+            <column name="FIRST_NM" length="25"/>
+        </property>
+        <property name="lastName" type="string">
+            <column name="FIRST_NM" length="25"/>
+        </property>
+        <property name="league" table="LEAGUE">
+            <column name="LEAGUE" length="25"/>
+        </property>
+        <property name="acct" table="ACCOUNT">
+            <column name="ACCOUNT" length="25"/>
+        </property>
+        <property name="funds" type="double">
+            <column name="FUNDS"/>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -32,7 +32,7 @@ public class HibernateUtil<T extends DefaultInterface> {
 	   sessionFactory.getCurrentSession().beginTransaction();
    }
    
-   public static void closeTransaction() {
-	   sessionFactory.getCurrentSession().getTransaction().commit();
-   }
+//   public static void closeTransaction() {
+//	   sessionFactory.getCurrentSession().getTransaction().commit();
+//   }
 }

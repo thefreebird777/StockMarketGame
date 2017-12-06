@@ -6,33 +6,33 @@ public class User implements DefaultInterface {
     private String password;
     private String firstName;
     private String lastName;
-    private String leagueID;
-    private String acctID;
+    private League league;
+    private Account acct;
     private double funds;
     private int userStatus;
     
     public User() {}
     
     public User(String email, String password, String firstName, String lastName,
-            String acctID) {
+            Account acct) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.leagueID = "";
-        this.acctID = acctID;
+        this.league = null;
+        this.acct = acct;
         this.funds = 0.0;
         this.userStatus = 0;
     }
     
     public User(String email, String password, String firstName, String lastName, 
-            String leagueID, String acctID, double funds, int userStatus) {
+            League league, Account acct, double funds, int userStatus) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.leagueID = leagueID;
-        this.acctID = acctID;
+        this.league = league;
+        this.acct = acct;
         this.funds = funds;
         this.userStatus = userStatus;
     }
@@ -45,10 +45,10 @@ public class User implements DefaultInterface {
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-    public String getLeagueID() { return leagueID; }
-    public void setLeagueID(String leagueID) { this.leagueID = leagueID; }
-    public String getAccountID() { return acctID; }
-    public void setAccountID(String accountID) { this.acctID = accountID; }
+    public League getLeague() { return league; }
+    public void setLeague(League league) { this.league = league; }
+    public Account getAccount() { return acct; }
+    public void setAccount(Account acct) { this.acct = acct; }
     public double getFunds() { return funds; }
     public void setFunds(double funds) { this.funds = funds; }    
     public int getUserStatus() { return userStatus; }

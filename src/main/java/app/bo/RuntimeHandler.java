@@ -1,66 +1,150 @@
 package app.bo;
 
 import app.dao.AccountDataAccess;
+import app.dao.DataAccessOperations;
+import app.dao.LeagueDataAccess;
+import app.dao.UserDataAccess;
 import app.exceptions.APIException;
-import app.models.User;
 import app.services.LoginService;
 import app.services.StockAPIService;
-import app.services.StockUpdateService;
-import com.google.gson.Gson;
+import org.hibernate.models.Account;
+import org.hibernate.models.Stock;
+import org.hibernate.models.User;
+import app.services.StockService;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-public class RuntimeHandler implements DataAccessOperations {
-    private static final Gson GSON = new Gson();
+public class RuntimeHandler {
     
-    public RuntimeHandler() { 
-        updateStocks();
+    private static final UserDataAccess USER_DAO = new UserDataAccess();
+    private static final LeagueDataAccess LEAGUE_DAO = new LeagueDataAccess();
+    private static final AccountDataAccess ACCT_DAO = new AccountDataAccess();
+    private static StockAPIService updateService; //placeholder for auto-update service
+    private static StockService stockService; //placeholder for internal stock service
+    
+    /**
+     * Constructor method
+     */
+    public RuntimeHandler() {
+        try {
+            stockService = new StockService();
+            updateService = new StockAPIService();
+        } catch(APIException apiEx) {
+            System.out.println("Critical failure: failed to create StockAPIService");
+            System.exit(0);
+        }
     }
 
-    @Override
-    public synchronized String select(String json, String objClass, int id) throws APIException {
+    /**
+     * Generic SQL select method to retrieve DB objects
+     * @param obj - converted JSON object to application model object
+     * @param objClass - used to switch between DAO objects
+     * @param id - 
+     * @return - Database object
+     * @throws APIException 
+     */
+    public synchronized Object select(Object obj, String objClass, String id) throws APIException {
         try {
-            String returnJSON = GSON.toJson(AccountDataAccess.select(json, id));
-            return returnJSON;
+            DataAccessOperations dao = selectDAO(objClass);
+            Object fetched = dao.select(obj, id);
+            if(fetched == null)
+            	throw new APIException(404, "The specified resource was not found", "");
+            else
+            	return fetched;
         } catch(APIException apiEx) {
             throw apiEx;
         }
     }
 
-    @Override
-    public synchronized int saveOrUpdate(String json, String objClass) throws APIException {
+    /**
+     * Generic SQL update (put) method 
+     * @param obj - converted JSON object to application model object
+     * @param objClass - used to switch between DAO objects
+     * @return - HTTP status
+     * @throws APIException 
+     */
+    public synchronized int saveOrUpdate(Object obj, String objClass, String id) throws APIException {
         try {
-            //convert object
-            return AccountDataAccess.saveOrUpdate(json);
+            DataAccessOperations dao = selectDAO(objClass);    
+            return dao.saveOrUpdate(obj, id);
         } catch(APIException apiEx) {
             throw apiEx;
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
+        }
+    }
+    
+    /**
+     * Generic SQL add (insert) method
+     * @param obj - converted JSON object to application model object
+     * @param objClass - used to switch between DAO objects
+     * @return - HTTP status
+     * @throws APIException 
+     */
+    public synchronized int add(Object obj, String objClass, String id) throws APIException {
+        try {
+            DataAccessOperations dao = selectDAO(objClass); 
+            return dao.add(obj, id);
+        } catch(APIException apiEx) {
+            throw apiEx;
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
         }
     }
 
-    @Override
-    public synchronized int remove(String json, String objClass) throws APIException {
-        return 200;
-    }
-
-    @Override
-    public synchronized int put(String json, String objClass) throws APIException {
-        return 200;
-    }
-    
-    public synchronized String getStock(String ticker) {
-        String json = GSON.toJson(StockUpdateService.getStock(ticker));
-        return json;
+    /**
+     * Generic SQL remove (delete) method
+     * @param obj - converted JSON object to application model object
+     * @param objClass - used to switch between DAO objects
+     * @return - HTTP status
+     * @throws APIException 
+     */
+    public synchronized int remove(Object obj, String objClass, String id) throws APIException {
+        try {
+            DataAccessOperations dao = selectDAO(objClass); 
+            return dao.remove(obj, id);
+        } catch(APIException apiEx) {
+            throw apiEx;
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
+        }
     }
     
     /**
      * Verifies a user's login and returns a JWT token
+     * @param email - user email
+     * @param password - user password
      * @return - JWT token
      * @throws APIException 
      */
-    public synchronized String login() throws APIException {
-        
-        return LoginService.generateJWT();
+    public synchronized String login(String email, String password) throws APIException {
+        try {
+            if(USER_DAO.verifyUserCredentials(email, password))
+                return LoginService.generateJWT();
+            else
+                throw new APIException(401, "Invalid login credentials", "");
+        } catch(APIException apiEx) {
+            throw apiEx;
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
+        }        
+    }
+    
+    /**
+     * Returns a stock object to the API
+     * @param ticker - ticker name [ID]
+     * @return - Stock object
+     * @throws APIException
+     */
+    public synchronized Stock getStock(String ticker) throws APIException {
+        try {
+            return StockService.getStock(ticker);
+        } catch(APIException apiEx) {
+            throw apiEx;
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
+        }        
     }
     
     /**
@@ -72,20 +156,34 @@ public class RuntimeHandler implements DataAccessOperations {
      * @throws APIException 
      */
     public synchronized int buyStock(String email, String ticker, int quantity) throws APIException {
-        User user = (User)AccountDataAccess.select(email, 0);
-        double price = StockUpdateService.getStock(ticker).price;
-        
-        try {
+       try {
+            User user = USER_DAO.select(new User(), email);
+            double price = StockService.getStock(ticker).price;
+            
             //checks if a user has sufficient funds AND the market is open
             if(checkFunds(user.getFunds(), price, quantity) && verifyMarketOpen()) {
                 double totalCost = (quantity * price);
-                return AccountDataAccess.saveOrUpdate(user); //updates user's account with new stock(s)
+                user.setFunds((user.getFunds() - totalCost));
+                
+                Account tempAcct = USER_DAO
+                        .select(user.getAccount(), user.getAccount().getAcctID())
+                        .getAccount();
+                Stock tempStock = new Stock(ticker, StockService.getStock(ticker).price, quantity);
+                tempAcct.addStock(ticker, tempStock);
+                user.setAccount(tempAcct);
+                
+                return USER_DAO.saveOrUpdate(user, email); //updates user's account with new stock(s)
             } else {
-                return 401; //not allowed to buy (un-authorized)
+                if(checkFunds(user.getFunds(), price, quantity) == false)
+                    throw new APIException(403, "Forbidden operation - insufficient funds", "RuntimeHandler::line 178");
+                else
+                    throw new APIException(403, "Forbidden operation - market closed", "RuntimeHandler::line 180");
             }  
         } catch(APIException apiEx) {
             throw apiEx;
-        }          
+        } catch(Exception e) {
+            throw new APIException(500, e.getMessage(), "");
+        }        
     }
     
     /**
@@ -102,23 +200,6 @@ public class RuntimeHandler implements DataAccessOperations {
     }
     
     /**
-     * Automatically updates the internal stock table every 10 min
-     */
-    private static void updateStocks() {
-        long count = 0;
-        while(true) {
-            if(count == 600000) {
-                if(verifyMarketOpen()) {
-                    //call APIService and update prices
-                }
-                count = 0; //resets internal milli count
-            } else {
-                count++;
-            }
-        }
-    }
-    
-    /**
      * Helper method that checks if a user can afford a specified stock
      * @param userFunds - current user funds
      * @param price - desired stock price
@@ -126,7 +207,7 @@ public class RuntimeHandler implements DataAccessOperations {
      * @return - True/False
      */
     private synchronized boolean checkFunds(double userFunds, double price, int quantity) {
-        return ((quantity * price) > userFunds);
+        return ((quantity * price) < userFunds);
     }
     
     /**
@@ -139,5 +220,23 @@ public class RuntimeHandler implements DataAccessOperations {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
         return (hour > 9 || (hour == 9 && min >= 30)) && (hour < 16);
+    }
+    
+    /**
+     * Helper method that returns a DAO to be used
+     * @param classType - indicator class
+     * @return - DAO object
+     */
+    private static DataAccessOperations selectDAO(String classType) throws APIException {
+        switch(classType) {
+            case ("User"):
+                return USER_DAO;
+            case ("League"):
+                return LEAGUE_DAO;
+            case ("Account"):
+                return ACCT_DAO;
+            default:
+                throw new APIException(500, "Internal Server Error", "selectDAO method");
+        }
     }
 }
