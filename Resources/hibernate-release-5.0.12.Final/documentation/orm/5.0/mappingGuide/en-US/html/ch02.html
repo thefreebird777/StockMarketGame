@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 2. Entity</title><link rel="stylesheet" type="text/css" href="css/hibernate.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><meta name="description" content="Discuss mapping entities in the application domain model."/><link rel="home" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="up" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="prev" href="ch01.html" title="Chapter 1. Data categorizations"/><link rel="next" href="ch03.html" title="Chapter 3. Basic Types"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch01.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="ch03.html"><strong>Next</strong></a></li></ul><div xml:lang="en" class="chapter" title="Chapter 2. Entity"><div class="titlepage"><div><div><h2 class="title"><a id="entity"/>Chapter 2. Entity</h2></div><div><div class="abstract" title="Abstract"><p class="title"><strong>Abstract</strong></p>
+            <p>Discuss mapping entities in the application domain model.</p>
+        </div></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="ch02.html#entity-pojo">2.1. POJO Models</a></span></dt><dd><dl><dt><span class="section"><a href="ch02.html#entity-pojo-final">2.1.1. Prefer non-final classes</a></span></dt><dt><span class="section"><a href="ch02.html#entity-pojo-constructor">2.1.2. Implement a no-argument constructor</a></span></dt><dt><span class="section"><a href="ch02.html#domainmodel-pojo-accessors">2.1.3. Declare getters and setters for persistent attributes</a></span></dt><dt><span class="section"><a href="ch02.html#entity-pojo-identifier">2.1.4. Provide identifier attribute(s)</a></span></dt><dt><span class="section"><a href="ch02.html#entity-pojo-mapping">2.1.5. Mapping the entity</a></span></dt><dt><span class="section"><a href="ch02.html#entity-pojo-optlock">2.1.6. Mapping optimistic locking</a></span></dt><dt><span class="section"><a href="ch02.html#entity-pojo-inheritance">2.1.7. Inheritance</a></span></dt></dl></dd></dl></div>
+    
+
+    <div class="sidebar" title="Related Topics"><div class="titlepage"><div><div><p class="title"><strong>Related Topics</strong></p></div></div></div>
+        
+        <p>
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><a class="xref" href="ch01.html" title="Chapter 1. Data categorizations">Chapter 1, <em>Data categorizations</em></a></p>
+                </li><li class="listitem">
+                    <p><a class="xref" href="">???</a></p>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="2.1. POJO Models"><div class="titlepage"><div><div><h2 class="title"><a id="entity-pojo"/>2.1. POJO Models</h2></div></div></div>
+        
+
+        <p>
+            Section <em class="citetitle">2.1 The Entity Class</em> of the <em class="citetitle">JPA 2.1 specification</em>
+            defines its requirements for an entity class.  Applications that wish to remain portable across JPA providers
+            should adhere to these requirements.
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        The entity class must be annotated with the <code class="interfacename">javax.persistence.Entity</code>
+                        annotation (or be denoted as such in XML mapping)
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must have a public or protected no-argument constructor.  It may define
+                        additional constructors as well.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must be a top-level class.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        An enum or interface may not be designated as an entity.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class must not be final.  No methods or persistent instance variables of the entity
+                        class may be final.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        If an entity instance is to be used remotely as a detached object, the entity class must
+                        implement the Serializable interface.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Both abstract and concrete classes can be entities.  Entities may extend non-entity classes as
+                        well as entity classes, and non-entity classes may extend entity classes.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The persistent state of an entity is represented by instance variables, which may correspond to
+                        JavaBean-style properties.  An instance variable must be directly accessed only from within the
+                        methods of the entity by the entity instance itself.  The state of the entity is available to
+                        clients only through the entity’s accessor methods (getter/setter methods) or other business
+                        methods.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Hibernate, however, is not as strict in its requirements.  The differences from the list above include:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        The entity class must have a no-argument constructor, which may be public, protected or package
+                        visibility.  It may define additional constructors as well.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        The entity class <span class="emphasis"><em>need not</em></span> be a top-level class.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Technically Hibernate can persist final classes or classes with final persistent state
+                        accessor (getter/setter) methods.  However, it is generally not a good idea as doing
+                        so will stop Hibernate from being able to generate proxies for lazy-loading the entity.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        Hibernate does not really care if you expose direct access to your instance variables and
+                        use them from outside the entity itself.  The validity of such a paradigm, however, is debatable
+                        at best.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Let's look at each requirement in detail.
+        </p>
+
+        <div class="section" title="2.1.1. Prefer non-final classes"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-final"/>2.1.1. Prefer non-final classes</h3></div></div></div>
+            
+
+            <p>
+                This is a requirement for JPA.  It is more of a recommendation for Hibernate.
+            </p>
+
+            <p>
+                A central feature of Hibernate is the ability to lazy load an entity's data via runtime proxies.  This
+                feature depends upon the entity class being non-final or else implementing an interface that declares
+                all the attribute getters/setters.  You can still persist classes that are declared final and that do
+                not implement such an interface with Hibernate; you just will not be able to use proxies for lazy
+                association fetching which will ultimately limit your options for performance tuning.
+            </p>
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    Starting in 5.0 Hibernate offers a more robust version of bytecode enhancement as another means
+                    for handling lazy loading.  Hibernate had some bytecode re-writing capabilities prior to 5.0 but
+                    they were very rudimentary.
+                    
+                </p>
+            </div>
+
+            <p>
+                You should also avoid declaring persistent attribute getters and setters as final for the reasons
+                already mentioned.  And of course making the instance variable hold the entiy's persistent state would
+                just simply not make any sense.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.2. Implement a no-argument constructor"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-constructor"/>2.1.2. Implement a no-argument constructor</h3></div></div></div>
+            
+
+            <p>
+                The entity class should have a no-argument constructor.  Both Hibernate and JPA require this.
+            </p>
+
+            <p>
+                JPA requires that this constructor be defined as public or protected.  Hibernate for the most part does
+                note care about the visibility as long as the system's SecurityManager allows overriding the visibility.
+                That said, the constructor should be defined with at least package visibility if you wish to leverage
+                runtime proxy generation.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.3. Declare getters and setters for persistent attributes"><div class="titlepage"><div><div><h3 class="title"><a id="domainmodel-pojo-accessors"/>2.1.3. Declare getters and setters for persistent attributes</h3></div></div></div>
+            
+
+            <p>
+                Standard, portable JPA essentially requires this.  Otherwise your model would violate the requirement
+                quoted above in regards to accessing the entity persistent state fields directly from outside the
+                entity itself.
+            </p>
+
+            <p>
+                Although Hibernate does not require it, it is recommended to follow JavaBean conventions by defining
+                getters and setters for you entities persistent attributes.  You can still tell Hibernate to directly
+                access the entity's fields.
+            </p>
+
+            <p>
+                Attributes (whether fields or getters/setters) need not be declared public.  Hibernate can deal with
+                attributes declared with public, protected, package or private visibility.  Again, if wanting to use
+                runtime proxy generation for lazy loading the visibility for the getter/setter should be at least
+                package visibility.
+            </p>
+        </div>
+
+
+        <div class="section" title="2.1.4. Provide identifier attribute(s)"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-identifier"/>2.1.4. Provide identifier attribute(s)</h3></div></div></div>
+            
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+                <p>
+                    Historically this was considered optional.  However, not defining identifier attribute(s) on the
+                    entity should be considered a deprecated feature that will be removed in an upcoming release.
+                </p>
+            </div>
+
+            <p>
+                The identifier attribute does not necessarily need to be mapped to the column(s) that physically
+                define the primary key.  However, it should map to column(s) that can uniquely identify each row.
+            </p>
+
+            <p>
+                We recommend that you declare consistently-named identifier attributes on persistent classes and
+                that you use a nullable (i.e., non-primitive) type.
+            </p>
+        </div>
+
+        <div class="section" title="2.1.5. Mapping the entity"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-mapping"/>2.1.5. Mapping the entity</h3></div></div></div>
+            
+
+            <p>
+                The main piece in mapping the entity is the <code class="interfacename">javax.persistence.Entity</code>
+                annotation.  The Entity annotation defines just one attribute <code class="methodname">name</code> which
+                is used to give the entity a specific name for use in JPQL queries; by default the name is the
+                unqualified name of the entity class.
+            </p>
+
+            <div class="example"><a id="d5e157"/><p class="title"><strong>Example 2.1. Simple @Entity</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Simple {
+	@Id
+	private Integer id;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                An entity models a database table.  The identifier uniquely identifies each row in that table.  By
+                default the name of the table is assumed to be the same as the name of the entity.  To explicitly
+                give the name of the table or to specify other information about the table, we would use the
+                <code class="interfacename">javax.persistence.Table</code> annotation.
+            </p>
+
+            <div class="example"><a id="d5e162"/><p class="title"><strong>Example 2.2. Simple @Entity with @Table</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@Table( catalog="CRM", schema="purchasing", name="t_simple" )
+public class Simple {
+	@Id
+	private Integer id;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                For details on mapping the identifier, see <a class="xref" href="ch06.html" title="Chapter 6. Identifiers">Chapter 6, <em>Identifiers</em></a>
+            </p>
+        </div>
+
+        <div class="section" title="2.1.6. Mapping optimistic locking"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-optlock"/>2.1.6. Mapping optimistic locking</h3></div></div></div>
+            
+
+            <p>
+                JPA defines support for optimistic locking based on either a version (sequential numeric) or timestamp
+                strategy.  To enable this style of optimistic locking simply add the
+                <code class="interfacename">javax.persistence.Version</code> to the persistent attribute that defines the
+                optimistic locking value.  According to JPA, the valid types for these attributes are limited to:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>int, or Integer</p>
+                    </li><li class="listitem">
+                        <p>short, or Short</p>
+                    </li><li class="listitem">
+                        <p>long, or Long</p>
+                    </li><li class="listitem">
+                        <p>java.sql.Timestamp</p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e180"/><p class="title"><strong>Example 2.3. Version</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Course {
+	@Id
+	private Integer id;
+	@Version
+	private Integer version;
+	...
+}</pre>
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Thing {
+	@Id
+	private Integer id;
+	@Version
+	Timestamp ts;
+	...
+}</pre>
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Thing2 {
+	@Id
+	private Integer id;
+	@Version
+	private Instant ts;
+	...
+}</pre>
+                
+            </div></div><br class="example-break"/>
+
+            <p>
+                Hibernate supports a form of optimistic locking that does not require a dedicated "version attribute".
+                This is intended mainly for use with modeling legacy schemas.  The idea is that you can get Hibernate
+                to perform "version checks" using either all of the entity's attributes, or just the attributes that
+                have changed.  This is achieved through the use of the
+                <code class="interfacename">org.hibernate.annotations.OptimisticLocking</code> annotation which defines a
+                single attribute of type <code class="interfacename">org.hibernate.annotations.OptimisticLockType</code>.
+                There are 4 available OptimisticLockTypes:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            <code class="literal">NONE</code> - optimistic locking is disabled.  Even if there is a @Version
+                            annotation present.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">VERSION</code> (the default) - performs optimistic locking based on a @Version
+                            as described above.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">ALL</code> - Perform optimistic locking based on *all* fields as part of an
+                            expanded WHERE clause restriction for the UPDATE/DELETE SQL statement.
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">DIRTY</code> - Perform optimistic locking based on *dirty* fields as part of
+                            an expanded WHERE clause restriction for the UPDATE/DELETE SQL statement
+                        </p>
+                    </li></ul></div><p>
+            </p>
+        </div>
+
+        <div class="section" title="2.1.7. Inheritance"><div class="titlepage"><div><div><h3 class="title"><a id="entity-pojo-inheritance"/>2.1.7. Inheritance</h3></div></div></div>
+            
+            <p>
+                
+                blah blah blah
+            </p>
+        </div>
+    </div>
+
+    <p>
+        * dynamic models (hbm.xml)
+            * Map mode
+            * proxy solutions (hibernate-core/src/test/java/org/hibernate/test/dynamicentity/tuplizer2)
+    </p>
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch01.html"><strong>Prev</strong>Chapter 1. Data categorizations</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li><li class="next"><a accesskey="n" href="ch03.html"><strong>Next</strong>Chapter 3. Basic Types</a></li></ul></body></html>

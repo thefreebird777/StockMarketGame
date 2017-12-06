@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 7. Natural Ids</title><link rel="stylesheet" type="text/css" href="css/hibernate.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><link rel="home" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="up" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="prev" href="ch06.html" title="Chapter 6. Identifiers"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch06.html"><strong>Prev</strong></a></li><li class="next"/></ul><div xml:lang="en" class="chapter" title="Chapter 7. Natural Ids"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid"/>Chapter 7. Natural Ids</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="ch07.html#naturalid-mapping">7.1. Natural Id Mapping</a></span></dt><dt><span class="section"><a href="ch07.html#naturalid-api">7.2. Natural Id API</a></span></dt><dt><span class="section"><a href="ch07.html#naturalid-mutability-caching">7.3. Natural Id - Mutability and Caching</a></span></dt></dl></div>
+    
+
+    <p>
+        Natural ids represent unique identifiers that naturally exist within your domain model.  Even if
+        a natural id does not make a good primary key, it still is useful to tell Hibernate about it.
+        As we will see later, Hibernate provides a dedicated, efficient API for loading and entity by its natural-id
+        much like it offers for loading by identifier (PK).
+    </p>
+
+    <div class="section" title="7.1. Natural Id Mapping"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-mapping"/>7.1. Natural Id Mapping</h2></div></div></div>
+        
+
+        <p>
+            Natural ids are defined in terms of one or more persistent attributes.
+        </p>
+
+        <div class="example"><a id="d5e1211"/><p class="title"><strong>Example 7.1. Natural id using single basic attribute</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Company {
+	@Id
+	private Integer id;
+	@NaturalId
+	private String taxIdentifier;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e1214"/><p class="title"><strong>Example 7.2. Natural id using single embedded attribute</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class PostalCarrier {
+	@Id
+	private Integer id;
+	@NaturalId
+	@Embedded
+	private PostalCode postalCode;
+	...
+
+}
+
+@Embeddable
+public class PostalCode {
+	...
+}
+</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e1217"/><p class="title"><strong>Example 7.3. Natural id using multiple persistent attributes</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Course {
+	@Id
+	private Integer id;
+	@NaturalId
+	@ManyToOne
+	private Department department;
+	@NaturalId
+	private String code;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+    </div>
+
+    <div class="section" title="7.2. Natural Id API"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-api"/>7.2. Natural Id API</h2></div></div></div>
+        
+
+        <p>
+            As stated before, Hibernate provides an API for loading entities by natural id.  This is represented by the
+            <code class="interfacename">org.hibernate.NaturalIdLoadAccess</code> contract obtained via
+            <code class="methodname">Session#byNaturalId</code>.  If the entity does not define a natural id, an exception
+            will be thrown there.
+        </p>
+
+        <div class="example"><a id="d5e1225"/><p class="title"><strong>Example 7.4. Using NaturalIdLoadAccess</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Company company = session.byNaturalId( Company.class )
+		.using( "taxIdentifier", "abc-123-xyz" )
+		.load();
+
+PostalCarrier carrier = session.byNaturalId( PostalCarrier.class )
+		.using( "postalCode", new PostalCode( ... ) )
+		.load();
+
+Department department = ...;
+Course course = session.byNaturalId( Course.class )
+		.using( "department", department )
+		.using( "code", "101" )
+		.load();</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            NaturalIdLoadAccess offers 2 distinct methods for obtaining the entity:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        <code class="methodname">load</code> - obtains a reference to the entity, making sure
+                        that the entity state is initialized.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        <code class="methodname">getReference</code> - obtains a reference to the entity.  The state
+                        may or may not be initialized.  If the entity is associated with the Session already,
+                        that reference (loaded or not) is returned; else if the entity supports proxy
+                        generation, an uninitialized proxy is generated and returned; otherwise
+                        the entity is loaded from the database and returned.
+                    </p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            NaturalIdLoadAccess also allows to request locking for the load.  We might use that to load an
+            entity by natural id and at the same time apply a pessimistic lock.  For additional details on locking,
+            see the <em class="citetitle">Hibernate User Guide</em>.
+        </p>
+
+        <p>
+            We will discuss the last method available on NaturalIdLoadAccess
+            (<code class="methodname">setSynchronizationEnabled</code>) in <a class="xref" href="ch07.html#naturalid-mutability-caching" title="7.3. Natural Id - Mutability and Caching">Section 7.3, “Natural Id - Mutability and Caching”</a>.
+        </p>
+
+        <p>
+            Because the Company and PostalCarrier entities define "simple" natural ids, we also allow simplified
+            access to load them based on the natural ids.
+        </p>
+
+        <div class="example"><a id="d5e1242"/><p class="title"><strong>Example 7.5. Using SimpleNaturalIdLoadAccess</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Company company = session.bySimpleNaturalId( Company.class )
+		.load( "abc-123-xyz" );
+
+PostalCarrier carrier = session.bySimpleNaturalId( PostalCarrier.class )
+		.load( new PostalCode( ... ) );</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Here we see the use of the <code class="interfacename">org.hibernate.SimpleNaturalIdLoadAccess</code>
+            contract, obtained via <code class="methodname">Session#bySimpleNaturalId</code>.  SimpleNaturalIdLoadAccess is similar
+            to NaturalIdLoadAccess except that it does not define the <code class="methodname">using</code> method.  Instead,
+            because these "simple" natural ids are defined based on just one attribute we can directly pass the
+            corresponding value of that natural id attribute directly to the <code class="methodname">load</code>
+            and <code class="methodname">getReference</code> methods.  If the entity does not define a natural id or if the
+            natural id it does define is not simple, an exception will be thrown there.
+        </p>
+    </div>
+
+    <div class="section" title="7.3. Natural Id - Mutability and Caching"><div class="titlepage"><div><div><h2 class="title"><a id="naturalid-mutability-caching"/>7.3. Natural Id - Mutability and Caching</h2></div></div></div>
+        
+        <p>
+            A natural id may be mutable or immutable.  By default <code class="literal">@NaturalId</code> marks
+            an immutable natural id.  An immutable natural id is expected to never change values.
+            If the values of the natural id attribute(s) can change, <code class="literal">@NaturalId(mutable=true)</code>
+            should be used instead.
+        </p>
+
+        <div class="example"><a id="d5e1256"/><p class="title"><strong>Example 7.6. Mutable natural id</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	@Id
+	private Integer id;
+	@NaturalId(mutable=true)
+	private String ssn;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Within the Session, Hibernate maintains a mapping from natural id values to pk values.  If natural ids
+            values have changed it is possible for this mapping to become out of date until a flush occurs.  To work
+            around this condition, Hibernate will attempt to discover any such pending changes and adjust for them
+            when the <code class="methodname">load</code> or <code class="methodname">getReference</code> method is executed.  To
+            be clear: this is only pertinent for mutable natural ids.
+        </p>
+
+        <p>
+            This "discovery and adjustment" have a performance impact.  If an application is certain that none of its
+            mutable natural ids already associated with the Session have changed, it can disable that checking by
+            calling <code class="methodname">setSynchronizationEnabled(false)</code> (the default is true).  This will force
+            Hibernate to circumvent the checking of mutable natural ids.
+        </p>
+
+        <div class="example"><a id="d5e1264"/><p class="title"><strong>Example 7.7. Mutable natural id synchronization use-case</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">Session session = ...;
+
+Person person = session.bySimpleNaturalId( Person.class )
+		.load( "123-45-6789" );
+person.setSsn( "987-65-4321" );
+
+...
+
+// returns null!
+person = session.bySimpleNaturalId( Person.class )
+		.setSynchronizationEnabled( false )
+		.load( "987-65-4321" );
+
+// returns correctly!
+person = session.bySimpleNaturalId( Person.class )
+		.setSynchronizationEnabled( true )
+		.load( "987-65-4321" );</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Not only can this NaturalId-to-PK resolution be cached in the Session, but we can also have it cached in
+            the second-level cache if second level caching is enabled.
+        </p>
+
+        <div class="example"><a id="d5e1268"/><p class="title"><strong>Example 7.8. Natural id caching</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+@NaturalIdCache
+public class Company {
+	@Id
+	private Integer id;
+	@NaturalId
+	private String taxIdentifier;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+    </div>
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch06.html"><strong>Prev</strong>Chapter 6. Identifiers</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li></ul></body></html>

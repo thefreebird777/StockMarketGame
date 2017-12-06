@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 5. Collections</title><link rel="stylesheet" type="text/css" href="css/hibernate.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><link rel="home" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="up" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="prev" href="ch04.html" title="Chapter 4. Compositions"/><link rel="next" href="ch06.html" title="Chapter 6. Identifiers"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch04.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="ch06.html"><strong>Next</strong></a></li></ul><div xml:lang="en" class="chapter" title="Chapter 5. Collections"><div class="titlepage"><div><div><h2 class="title"><a id="collections"/>Chapter 5. Collections</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="ch05.html#collections-synopsis">5.1. Collections as a value type</a></span></dt><dt><span class="section"><a href="ch05.html#collections-value">5.2. Collections of value types</a></span></dt><dt><span class="section"><a href="ch05.html#collections-entity">5.3. Collections of entities</a></span></dt><dt><span class="section"><a href="ch05.html#collections-list">5.4. List - index</a></span></dt><dt><span class="section"><a href="ch05.html#collections-map">5.5. Map - key</a></span></dt><dt><span class="section"><a href="ch05.html#collections-bag">5.6. Bags</a></span></dt><dt><span class="section"><a href="ch05.html#collections-array">5.7. Arrays</a></span></dt><dt><span class="section"><a href="ch05.html#collections-as-basic">5.8. Collections as basic value type</a></span></dt></dl></div>
+    
+
+    <div class="section" title="5.1. Collections as a value type"><div class="titlepage"><div><div><h2 class="title"><a id="collections-synopsis"/>5.1. Collections as a value type</h2></div></div></div>
+        
+        <p>
+            discussions of what it means for them to be value types  - lifecycle, opt-locking
+        </p>
+        <p>
+            Collections have the usual behavior of value types.  They are automatically persisted when referenced by
+            a persistent object and are automatically deleted when unreferenced.  If a collection is passed from one
+            persistent object to another, its elements might be moved from one table to another.  Two entities cannot
+            share a reference to the same collection instance.
+        </p>
+        <p>
+            Collection attributes do not support null value semantics; Hibernate does not distinguish between a null
+            collection reference and an empty collection.
+        </p>
+        <p>
+            It is important that collections be defined using the appropriate Java Collections Framework interface
+            rather than a specific implementation.  From a theoretical perspective, this just follows good design
+            principles.  From a practical perspective, Hibernate (really all persistence providers) will use
+            their own collection implementations which conform to the Java Collections Framework interfaces.
+        </p>
+    </div>
+
+    <div class="section" title="5.2. Collections of value types"><div class="titlepage"><div><div><h2 class="title"><a id="collections-value"/>5.2. Collections of value types</h2></div></div></div>
+        
+        <p>
+            collection of values - elements can be of any value type except for collections (in fact even compositions as the element cannot contain collections)
+            * basics
+            * compositions
+        </p>
+    </div>
+
+    <div class="section" title="5.3. Collections of entities"><div class="titlepage"><div><div><h2 class="title"><a id="collections-entity"/>5.3. Collections of entities</h2></div></div></div>
+        
+        <p>
+            * one-to-many
+            * many-to-many
+        </p>
+    </div>
+
+    <div class="section" title="5.4. List - index"><div class="titlepage"><div><div><h2 class="title"><a id="collections-list"/>5.4. List - index</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping list index
+        </p>
+    </div>
+
+    <div class="section" title="5.5. Map - key"><div class="titlepage"><div><div><h2 class="title"><a id="collections-map"/>5.5. Map - key</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping map key
+        </p>
+    </div>
+
+    <div class="section" title="5.6. Bags"><div class="titlepage"><div><div><h2 class="title"><a id="collections-bag"/>5.6. Bags</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping bags and idbags
+        </p>
+    </div>
+
+    <div class="section" title="5.7. Arrays"><div class="titlepage"><div><div><h2 class="title"><a id="collections-array"/>5.7. Arrays</h2></div></div></div>
+        
+        <p>
+            
+            todo : discuss mapping arrays
+        </p>
+    </div>
+
+    <div class="section" title="5.8. Collections as basic value type"><div class="titlepage"><div><div><h2 class="title"><a id="collections-as-basic"/>5.8. Collections as basic value type</h2></div></div></div>
+        
+        <p>
+            Notice how all the previous examples explicitly mark the collection attribute as either
+            ElementCollection, OneToMany or ManyToMany.  Collections not marked as such, or collections explicitly
+            maked with @Basic are treated as JPA basic values.  Meaning there value is stored into a single
+            column in the containing table.
+        </p>
+        <p>
+            This is sometimes beneficial.  Consider a use-case such as a VARCHAR column that represents a
+            delimited list or set of Strings.
+        </p>
+        <div class="example"><a id="d5e943"/><p class="title"><strong>Example 5.1. Delimited set of tags</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public static class Post {
+	@Id
+	public Integer id;
+	@Basic
+	@Type( type = "delimited_strings" )
+	Set&lt;String&gt; tags;
+}
+
+
+public static class DelimitedStringsType extends AbstractSingleColumnStandardBasicType&lt;Set&gt; {
+	public DelimitedStringsType() {
+		super(
+				VarcharTypeDescriptor.INSTANCE,
+				new DelimitedStringsJavaTypeDescriptor()
+		);
+	}
+
+	@Override
+	public String getName() {
+		return "delimited_strings";
+	}
+}
+
+public static class DelimitedStringsJavaTypeDescriptor extends AbstractTypeDescriptor&lt;Set&gt; {
+	public DelimitedStringsJavaTypeDescriptor() {
+		super(
+				Set.class,
+				new MutableMutabilityPlan&lt;Set&gt;() {
+					@Override
+					protected Set deepCopyNotNull(Set value) {
+						Set&lt;String&gt; copy = new HashSet&lt;String&gt;();
+						copy.addAll( value );
+						return copy;
+					}
+				}
+		);
+	}
+
+	@Override
+	public String toString(Set value) {
+		return null;
+	}
+
+	@Override
+	public Set fromString(String string) {
+		return null;
+	}
+
+	@Override
+	public &lt;X&gt; X unwrap(Set value, Class&lt;X&gt; type, WrapperOptions options) {
+		return null;
+	}
+
+	@Override
+	public &lt;X&gt; Set wrap(X value, WrapperOptions options) {
+		return null;
+	}
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            See the <em class="citetitle">Hibernate Integrations Guide</em> for more details on developing
+            custom value type mappings.  Without the special type mapping above the "set of tags" would have
+            simply been marshalled using serialization.
+        </p>
+    </div>
+
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch04.html"><strong>Prev</strong>Chapter 4. Compositions</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li><li class="next"><a accesskey="n" href="ch06.html"><strong>Next</strong>Chapter 6. Identifiers</a></li></ul></body></html>

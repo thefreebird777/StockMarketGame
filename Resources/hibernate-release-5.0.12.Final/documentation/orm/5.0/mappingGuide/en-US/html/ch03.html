@@ -1,0 +1,978 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 3. Basic Types</title><link rel="stylesheet" type="text/css" href="css/hibernate.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/><meta name="description" content="This chapter will discuss actual basic type mappings as well as how to override those mappings and provide extra mappings."/><link rel="home" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="up" href="index.html" title="Hibernate Domain Model Mapping Guide"/><link rel="prev" href="ch02.html" title="Chapter 2. Entity"/><link rel="next" href="ch04.html" title="Chapter 4. Compositions"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.hibernate.org" class="site_href"><strong>Hibernate.org</strong></a><a href="http://hibernate.org/Documentation/DocumentationOverview" class="doc_href"><strong>Community Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch02.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="ch04.html"><strong>Next</strong></a></li></ul><div class="chapter" title="Chapter 3. Basic Types"><div class="titlepage"><div><div><h2 class="title"><a id="basic"/>Chapter 3. Basic Types</h2></div><div><div class="abstract" title="Abstract"><p class="title"><strong>Abstract</strong></p>
+            <p>
+                This chapter will discuss actual basic type mappings as well as how to override those
+                mappings and provide extra mappings.
+            </p>
+        </div></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="ch03.html#basic-provided">3.1. Hibernate-provided BasicTypes</a></span></dt><dt><span class="section"><a href="ch03.html#basic-annotation">3.2. The <code class="literal">@Basic</code> annotation</a></span></dt><dt><span class="section"><a href="ch03.html#d5e555">3.3. The <code class="literal">@Column</code> annotation</a></span></dt><dt><span class="section"><a href="ch03.html#basic-registry">3.4. BasicTypeRegistry</a></span></dt><dt><span class="section"><a href="ch03.html#basic-explicit">3.5. Explicit BasicTypes</a></span></dt><dt><span class="section"><a href="ch03.html#basic-custom">3.6. Custom BasicTypes</a></span></dt><dt><span class="section"><a href="ch03.html#basic-enums">3.7. Mapping enums</a></span></dt><dd><dl><dt><span class="section"><a href="ch03.html#d5e637">3.7.1. @Enumerated</a></span></dt><dt><span class="section"><a href="ch03.html#d5e678">3.7.2. AttributeConverter</a></span></dt><dt><span class="section"><a href="ch03.html#d5e702">3.7.3. Custom type</a></span></dt></dl></dd><dt><span class="section"><a href="ch03.html#basic-lob">3.8. Mapping LOBs</a></span></dt><dt><span class="section"><a href="ch03.html#basic-nationalized">3.9. Mapping Nationalized Character Data</a></span></dt><dt><span class="section"><a href="ch03.html#basic-uuid">3.10. Mapping UUID Values</a></span></dt><dd><dl><dt><span class="section"><a href="ch03.html#d5e806">3.10.1. UUID as binary</a></span></dt><dt><span class="section"><a href="ch03.html#d5e810">3.10.2. UUID as (var)char</a></span></dt><dt><span class="section"><a href="ch03.html#d5e813">3.10.3. PostgeSQL-specific UUID</a></span></dt><dt><span class="section"><a href="ch03.html#d5e819">3.10.4. UUID as identifier</a></span></dt></dl></dd><dt><span class="section"><a href="ch03.html#basic-datetime">3.11. Mapping Date/Time Values</a></span></dt><dt><span class="section"><a href="ch03.html#basic-jpaconvert">3.12. JPA 2.1 AttributeConverters</a></span></dt></dl></div>
+    
+
+    <p>
+        Basic value types usually map a single database value, or column, to a single, non-aggregated Java
+        type.  Hibernate provides a number of built-in basic types, which follow the natural mappings
+        recommended in the JDBC specifications.
+    </p>
+
+    <p>
+        Internally Hibernate uses a registry of basic types when it needs to resolve the specific
+        <code class="interfacename">org.hibernate.type.Type</code> to use in certain situations.
+    </p>
+
+    <div class="section" title="3.1. Hibernate-provided BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-provided"/>3.1. Hibernate-provided BasicTypes</h2></div></div></div>
+        
+        <div class="table"><a id="d5e216"/><p class="title"><strong>Table 3.1. Standard BasicTypes</strong></p><div class="table-contents">
+            
+            <table summary="Standard BasicTypes" border="1"><colgroup><col/><col/><col/><col/></colgroup><thead><tr><th>Hibernate type (org.hibernate.type package)</th><th>JDBC type</th><th>Java type</th><th>BasicTypeRegistry key(s)</th></tr></thead><tbody><tr><td>StringType</td><td>VARCHAR</td><td>java.lang.String</td><td>string, java.lang.String</td></tr><tr><td>MaterializedClob</td><td>CLOB</td><td>java.lang.String</td><td>materialized_clob</td></tr><tr><td>TextType</td><td>LONGVARCHAR</td><td>java.lang.String</td><td>text</td></tr><tr><td>CharacterType</td><td>CHAR</td><td>char, java.lang.Character</td><td>char, java.lang.Character</td></tr><tr><td>BooleanType</td><td>BIT</td><td>boolean, java.lang.Boolean</td><td>boolean, java.lang.Boolean</td></tr><tr><td>NumericBooleanType</td><td>INTEGER, 0 is false, 1 is true</td><td>boolean, java.lang.Boolean</td><td>numeric_boolean</td></tr><tr><td>YesNoType</td><td>CHAR, 'N'/'n' is false, 'Y'/'y' is true. The uppercase value is written to the database.</td><td>boolean, java.lang.Boolean</td><td>yes_no</td></tr><tr><td>TrueFalseType</td><td>CHAR, 'F'/'f' is false, 'T'/'t' is true. The uppercase value is written to the database.</td><td>boolean, java.lang.Boolean</td><td>true_false</td></tr><tr><td>ByteType</td><td>TINYINT</td><td>byte, java.lang.Byte</td><td>byte, java.lang.Byte</td></tr><tr><td>ShortType</td><td>SMALLINT</td><td>short, java.lang.Short</td><td>short, java.lang.Short</td></tr><tr><td>IntegerTypes</td><td>INTEGER</td><td>int, java.lang.Integer</td><td>int, java.lang.Integer</td></tr><tr><td>LongType</td><td>BIGINT</td><td>long, java.lang.Long</td><td>long, java.lang.Long</td></tr><tr><td>FloatType</td><td>FLOAT</td><td>float, java.lang.Float</td><td>float, java.lang.Float</td></tr><tr><td>DoubleType</td><td>DOUBLE</td><td>double, java.lang.Double</td><td>double, java.lang.Double</td></tr><tr><td>BigIntegerType</td><td>NUMERIC</td><td>java.math.BigInteger</td><td>big_integer, java.math.BigInteger</td></tr><tr><td>BigDecimalType</td><td>NUMERIC</td><td>java.math.BigDecimal</td><td>big_decimal, java.math.bigDecimal</td></tr><tr><td>TimestampType</td><td>TIMESTAMP</td><td>java.sql.Timestamp</td><td>timestamp, java.sql.Timestamp</td></tr><tr><td>TimeType</td><td>TIME</td><td>java.sql.Time</td><td>time, java.sql.Time</td></tr><tr><td>DateType</td><td>DATE</td><td>java.sql.Date</td><td>date, java.sql.Date</td></tr><tr><td>CalendarType</td><td>TIMESTAMP</td><td>java.util.Calendar</td><td>calendar, java.util.Calendar</td></tr><tr><td>CalendarDateType</td><td>DATE</td><td>java.util.Calendar</td><td>calendar_date</td></tr><tr><td>CurrencyType</td><td>java.util.Currency</td><td>VARCHAR</td><td>currency, java.util.Currency</td></tr><tr><td>LocaleType</td><td>VARCHAR</td><td>java.util.Locale</td><td>locale, java.utility.locale</td></tr><tr><td>TimeZoneType</td><td>VARCHAR, using the TimeZone ID</td><td>java.util.TimeZone</td><td>timezone, java.util.TimeZone</td></tr><tr><td>UrlType</td><td>VARCHAR</td><td>java.net.URL</td><td>url, java.net.URL</td></tr><tr><td>ClassType</td><td>VARCHAR (class FQN)</td><td>java.lang.Class</td><td>class, java.lang.Class</td></tr><tr><td>BlobType</td><td>BLOB</td><td>java.sql.Blob</td><td>blog, java.sql.Blob</td></tr><tr><td>ClobType</td><td>CLOB</td><td>java.sql.Clob</td><td>clob, java.sql.Clob</td></tr><tr><td>BinaryType</td><td>VARBINARY</td><td>byte[]</td><td>binary, byte[]</td></tr><tr><td>MaterializedBlobType</td><td>BLOB</td><td>byte[]</td><td>materized_blob</td></tr><tr><td>ImageType</td><td>LONGVARBINARY</td><td>byte[]</td><td>image</td></tr><tr><td>WrapperBinaryType</td><td>VARBINARY</td><td>java.lang.Byte[]</td><td>wrapper-binary, Byte[], java.lang.Byte[]</td></tr><tr><td>CharArrayType</td><td>VARCHAR</td><td>char[]</td><td>characters, char[]</td></tr><tr><td>CharacterArrayType</td><td>VARCHAR</td><td>java.lang.Character[]</td><td>wrapper-characters, Character[], java.lang.Character[]</td></tr><tr><td>UUIDBinaryType</td><td>BINARY</td><td>java.util.UUID</td><td>uuid-binary, java.util.UUID</td></tr><tr><td>UUIDCharType</td><td>CHAR, can also read VARCHAR</td><td>java.util.UUID</td><td>uuid-char</td></tr><tr><td>PostgresUUIDType</td><td>PostgreSQL UUID, through Types#OTHER, which complies to the PostgreSQL JDBC driver definition</td><td>java.util.UUID</td><td>pg-uuid</td></tr><tr><td>SerializableType</td><td>VARBINARY</td><td>implementors of java.lang.Serializable</td><td> Unlike the other value types, multiple instances of this type are registered. It is registered
+                            once under java.io.Serializable, and registered under the specific java.io.Serializable implementation
+                            class names.</td></tr><tr><td>StringNVarcharType</td><td>NVARCHAR</td><td>java.lang.String</td><td>nstring</td></tr><tr><td>NTextType</td><td>LONGNVARCHAR</td><td>java.lang.String</td><td>ntext</td></tr><tr><td>NClobType</td><td>NCLOB</td><td>java.sql.NClob</td><td>nclob, java.sql.NClob</td></tr><tr><td>MaterializedNClobType</td><td>NCLOB</td><td>java.lang.String</td><td>materialized_nclob</td></tr><tr><td>PrimitiveCharacterArrayNClobType</td><td>NCHAR</td><td>char[]</td><td>N/A</td></tr><tr><td>CharacterNCharType</td><td>NCHAR</td><td>java.lang.Character</td><td>ncharacter</td></tr><tr><td>CharacterArrayNClobType</td><td>NCLOB</td><td>java.lang.Character[]</td><td>N/A</td></tr></tbody></table>
+        </div></div><br class="table-break"/>
+
+
+        <div class="table"><a id="d5e451"/><p class="title"><strong>Table 3.2. BasicTypes added by hibernate-java8</strong></p><div class="table-contents">
+            
+            <table summary="BasicTypes added by hibernate-java8" border="1"><colgroup><col/><col/><col/><col/></colgroup><thead><tr><th>Hibernate type (org.hibernate.type package)</th><th>JDBC type</th><th>Java type</th><th>BasicTypeRegistry key(s)</th></tr></thead><tbody><tr><td>DurationType</td><td>BIGINT</td><td>java.time.Duration</td><td>Duration, java.time.Duration</td></tr><tr><td>InstantType</td><td>TIMESTAMP</td><td>java.time.Instant</td><td>Instant, java.time.Instant</td></tr><tr><td>LocalDateTimeType</td><td>TIMESTAMP</td><td>java.time.LocalDateTime</td><td>LocalDateTime, java.time.LocalDateTime</td></tr><tr><td>LocalDateType</td><td>DATE</td><td>java.time.LocalDate</td><td>LocalDate, java.time.LocalDate</td></tr><tr><td>LocalTimeType</td><td>TIME</td><td>java.time.LocalTime</td><td>LocalTime, java.time.LocalTime</td></tr><tr><td>OffsetDateTimeType</td><td>TIMESTAMP</td><td>java.time.OffsetDateTime</td><td>OffsetDateTime, java.time.OffsetDateTime</td></tr><tr><td>OffsetTimeType</td><td>TIME</td><td>java.time.OffsetTime</td><td>OffsetTime, java.time.OffsetTime</td></tr><tr><td>OffsetTimeType</td><td>TIMESTAMP</td><td>java.time.ZonedDateTime</td><td>ZonedDateTime, java.time.ZonedDateTime</td></tr></tbody></table>
+        </div></div><br class="table-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                To use these hibernate-java8 types just add the hibernate-java8 jar to your classpath; Hibernate
+                will take care of the rest.  See <a class="xref" href="ch03.html#basic-datetime" title="3.11. Mapping Date/Time Values">Section 3.11, “Mapping Date/Time Values”</a>
+            </p>
+        </div>
+
+        
+
+        <p>
+            These mappings are managed by a service inside Hibernate called the
+            <code class="classname">org.hibernate.type.BasicTypeRegistry</code>, which essentially maintains a map of
+            <code class="interfacename">org.hibernate.type.BasicType</code> (a <code class="interfacename">org.hibernate.type.Type</code>
+            specialization) instances keyed by a name.  That is the purpose of the "BasicTypeRegistry key(s)" column
+            in the previous tables.  We will revisit this detail later.
+        </p>
+    </div>
+
+
+    <div class="section" title="3.2. The @Basic annotation"><div class="titlepage"><div><div><h2 class="title"><a id="basic-annotation"/>3.2. The <code class="literal">@Basic</code> annotation</h2></div></div></div>
+        
+
+        <p>
+            Strictly speaking, a basic type is denoted with the <code class="interfacename">javax.persistence.Basic</code>
+            annotation.  Generally speaking the <code class="literal">@Basic</code> annotation can be ignored.  Both of the
+            following examples are ultimately the same.
+        </p>
+
+        <div class="example"><a id="d5e514"/><p class="title"><strong>Example 3.1. With <code class="literal">@Basic</code></strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+    @Id
+	@Basic
+	private Integer id;
+	@Basic
+	private String sku;
+	@Basic
+	private String name;
+	@Basic
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+        <div class="example"><a id="d5e518"/><p class="title"><strong>Example 3.2. Without <code class="literal">@Basic</code></strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	@Id
+	private Integer id;
+	private String sku;
+	private String name;
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Tip</h2>
+            <p>
+                The JPA specification strictly limits the Java types that can be marked as
+                basic to the following:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">Java primitive types (boolean, int, etc)</li><li class="listitem">wrappers for the primitive types (java.lang.Boolean, java.lang.Integer, etc)</li><li class="listitem">java.lang.String</li><li class="listitem">java.math.BigInteger</li><li class="listitem">java.math.BigDecimal</li><li class="listitem">java.util.Date</li><li class="listitem">java.util.Calendar</li><li class="listitem">java.sql.Date</li><li class="listitem">java.sql.Time</li><li class="listitem">java.sql.Timestamp</li><li class="listitem">byte[]</li><li class="listitem">Byte[]</li><li class="listitem">char[]</li><li class="listitem">Character[]</li><li class="listitem">enums</li><li class="listitem">any other type that implements Serializable*</li></ul></div><p>
+                * JPA's "support" for Serializable types is to directly serialize their state to the database.
+            </p>
+            <p>
+                If provider portability is a concern, you should stick to just these basic types.  Note that JPA
+                2.1 did add the notion of an <code class="interfacename">javax.persistence.AttributeConverter</code>
+                to help alleviate some of these concerns; see <a class="xref" href="ch03.html#basic-jpaconvert" title="3.12. JPA 2.1 AttributeConverters">Section 3.12, “JPA 2.1 AttributeConverters”</a>
+            </p>
+        </div>
+
+        <p>
+            The <code class="literal">@Basic</code> annotation defines 2 attributes.
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p>
+                        <code class="literal">optional</code> - boolean (defaults to true) - Defines whether this attribute
+                        allows nulls.  JPA defines this as "a hint", which essentially means that it affect is
+                        specifically required.  As long as the type is not primitive, Hibernate takes this to mean
+                        that the underlying column should be <code class="literal">NULLABLE</code>.
+                    </p>
+                </li><li class="listitem">
+                    <p>
+                        <code class="literal">fetch</code> - FetchType (defaults to EAGER) - Defines whether this attribute
+                        should be fetched eagerly or lazily.  JPA says that EAGER is a requirement to the provider
+                        (Hibernate) that the value should be fetched when the owner is fetched but that
+                        LAZY is merely a hint that the value be fetched when the attribute is accessed.  Hibernate
+                        ignores this setting for basic types unless you are using bytecode enhancement.  See
+                        the <em class="citetitle">Hibernate User Guide</em> for additional information on
+                        fetching and on bytecode enhancement.
+                    </p>
+                </li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="3.3. The @Column annotation"><div class="titlepage"><div><div><h2 class="title"><a id="d5e555"/>3.3. The <code class="literal">@Column</code> annotation</h2></div></div></div>
+        
+        <p>
+            JPA defines rules for implicitly determining the name of tables and columns.  For a detailed discussion
+            of implicit naming see <a class="xref" href="">???</a>.
+        </p>
+
+        <p>
+            For basic type attributes, the implicit naming rule is that the column name is the same as the attribute
+            name.  If that implicit naming rule does not meet your requirements, you can explicitly tell Hibernate
+            (and other providers) the column name to use.
+        </p>
+
+        <div class="example"><a id="d5e561"/><p class="title"><strong>Example 3.3. Explicit column naming</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	@Id
+	@Basic
+	private Integer id;
+	@Basic
+	private String sku;
+	@Basic
+	private String name;
+	@Basic
+	@Column( name = "NOTES" )
+	private String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Here we use <code class="literal">@Column</code> to explicitly map the <code class="literal">description</code> attribute to the
+            <code class="literal">NOTES</code> column, as opposed to the implicit column name <code class="literal">description</code>.
+        </p>
+
+        <p>
+            The <code class="literal">@Column</code> annotation defines other mapping information as well.  See its javadocs
+            for details.
+        </p>
+    </div>
+
+    <div class="section" title="3.4. BasicTypeRegistry"><div class="titlepage"><div><div><h2 class="title"><a id="basic-registry"/>3.4. BasicTypeRegistry</h2></div></div></div>
+        
+        <p>
+            We said before that a Hibernate type is not a Java type, nor a SQL type, but that it
+            understands both and performs the marshalling between them.  But looking at the
+            basic type mappings from the previous examples, how did Hibernate know to use
+            its <code class="classname">org.hibernate.type.StringType</code> for mapping for
+            <code class="classname">java.lang.String</code> attributes or its
+            <code class="classname">org.hibernate.type.IntegerType</code> for mapping
+            <code class="classname">java.lang.Integer</code> attributes?
+        </p>
+
+        <p>
+            The answer lies in a service inside Hibernate called the
+            <code class="classname">org.hibernate.type.BasicTypeRegistry</code>, which essentially maintains a map of
+            <code class="interfacename">org.hibernate.type.BasicType</code> (a <code class="interfacename">org.hibernate.type.Type</code>
+            specialization) instances keyed by a name.
+        </p>
+
+        <p>
+            We will see later (<a class="xref" href="ch03.html#basic-explicit" title="3.5. Explicit BasicTypes">Section 3.5, “Explicit BasicTypes”</a>) that we can explicitly tell Hibernate which
+            BasicType to use for a particular attribute.  But first let's explore how implicit resolution works
+            and how applications can adjust implicit resolution.
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                A thorough discussion of the BasicTypeRegistry and all the different ways to contribute types to it
+                is beyond the scope of this documentation.  Please see <em class="citetitle">Integrations Guide</em>
+                for complete details.
+            </p>
+        </div>
+
+        <p>
+            As an example, take a String attribute such as we saw before with Product#sku.  Since there was no
+            explicit type mapping, Hibernate looks to the BasicTypeRegistry to find the registered mapping
+            for <code class="classname">java.lang.String</code>.  This goes back to the "BasicTypeRegistry key(s)" column
+            we saw in the tables at the start of this chapter.
+        </p>
+
+        <p>
+            As a baseline within BasicTypeRegistry, Hibernate follows the recommended mappings of JDBC
+            for Java types.  JDBC recommends mapping Strings to VARCHAR, which is the exact mapping that
+            StringType handles.  So that is the baseline mapping within BasicTypeRegistry for Strings.
+        </p>
+
+        <p>
+            Applications can also extend (add new BasicType registrations) or override (replace an exiting BasicType
+            registration) using one of the <code class="methodname">MetadataBuilder#applyBasicType</code> methods
+            or the <code class="methodname">MetadataBuilder#applyTypes</code> method during bootstrap.  For more details, see
+            <a class="xref" href="ch03.html#basic-custom" title="3.6. Custom BasicTypes">Section 3.6, “Custom BasicTypes”</a>
+        </p>
+    </div>
+
+    <div class="section" title="3.5. Explicit BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-explicit"/>3.5. Explicit BasicTypes</h2></div></div></div>
+        
+
+        <p>
+            Sometimes you want a particular attribute to be handled differently.  Occasionally Hibernate will
+            implicitly pick a BasicType that you do not want (and for some reason you do not want to adjust the
+            BasicTypeRegistry).
+        </p>
+
+        <p>
+            In these cases you must explicitly tell Hibernate the BasicType to use, via the
+            <code class="interfacename">org.hibernate.annotations.Type</code> annotation.
+        </p>
+
+        <div class="example"><a id="d5e599"/><p class="title"><strong>Example 3.4. Using @org.hibernate.annotations.Type</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@org.hibernate.annotations.Type( type="nstring" )
+private String name;
+
+@org.hibernate.annotations.Type( type="materialized_nclob" )
+private String description;</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            This tells Hibernate to store the Strings as nationalized data.  This is just for illustration purposes;
+            for better ways to indicate nationalized character data see <a class="xref" href="ch03.html#basic-nationalized" title="3.9. Mapping Nationalized Character Data">Section 3.9, “Mapping Nationalized Character Data”</a>
+        </p>
+
+        <p>
+            Additionally the description is to be handled as a LOB.  Again, for better ways to indicate
+            LOBs see <a class="xref" href="ch03.html#basic-lob" title="3.8. Mapping LOBs">Section 3.8, “Mapping LOBs”</a>.
+        </p>
+
+        <p>
+            The <code class="methodname">org.hibernate.annotations.Type#type</code> attribute can name any of the following:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>FQN of any <code class="interfacename">org.hibernate.type.Type</code> implementation</p></li><li class="listitem"><p>Any key registered with BasicTypeRegistry</p></li><li class="listitem"><p>The name of any known "type definitions"</p></li></ul></div><p>
+        </p>
+    </div>
+
+    <div class="section" title="3.6. Custom BasicTypes"><div class="titlepage"><div><div><h2 class="title"><a id="basic-custom"/>3.6. Custom BasicTypes</h2></div></div></div>
+        
+
+        <p>
+            Hibernate makes it relatively easy for developers to create their own basic type mappings type.  For
+            example, you might want to persist properties of type <code class="classname">java.lang.BigInteger</code> to
+            <code class="literal">VARCHAR</code> columns, or support completely new types.
+        </p>
+
+        <p>
+            There are 2 approaches to developing a custom BasicType.  As a means of illustrating the different
+            approaches, lets consider a use case where we need to support a class called Fizzywig from a third party
+            library.  Lets assume that Fizzywig naturally stores as a VARCHAR.
+        </p>
+
+        <p>
+            The first approach is to directly implement the BasicType interface.
+        </p>
+
+        <div class="example"><a id="d5e623"/><p class="title"><strong>Example 3.5. Custom BasicType implementation</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class FizzywigType1 implements org.hibernate.type.BasicType {
+	public static final FizzywigType1 INSTANCE = new FizzywigType1();
+
+	@Override
+	public String[] getRegistrationKeys() {
+		return new String[] { Fizzywig.class.getName() };
+	}
+
+	@Override
+	public int[] sqlTypes(Mapping mapping) {
+		return new int[] { java.sql.Types.VARCHAR };
+	}
+
+	@Override
+	public Class getReturnedClass() {
+		return Money.class;
+	}
+
+	@Override
+	public Object nullSafeGet(
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner) throws SQLException {
+		return Fizzwig.fromString(
+				StringType.INSTANCE.get( rs, names[0], sesson )
+		);
+	}
+
+	@Override
+	public void nullSafeSet(
+			PreparedStatement st,
+			Object value,
+			int index,
+			boolean[] settable,
+			SessionImplementor session) throws SQLException {
+		final String dbValue = value == null
+				? null
+				: ( (Fizzywig) value ).asString();
+		StringType.INSTANCE.nullSafeSet( st, value, index, settable, session );
+	}
+
+	...
+}</pre>
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">MetadataSources metadataSources = ...;
+
+metadataSources.getMetaDataBuilder()
+		.applyBasicType( FizzwigType1.INSTANCE )
+		...</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            The second approach is to implement the UserType interface.
+        </p>
+
+        <div class="example"><a id="d5e628"/><p class="title"><strong>Example 3.6. Custom UserType implementation</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">public class FizzywigType2 implements org.hibernate.usertype.UserType {
+	public static final String KEYS = new String[] { Fizzywig.class.getName() };
+	public static final FizzywigType1 INSTANCE = new FizzywigType1();
+
+	@Override
+	public int[] sqlTypes(Mapping mapping) {
+		return new int[] { java.sql.Types.VARCHAR };
+	}
+
+	@Override
+	public Class getReturnedClass() {
+		return Fizzywig.class;
+	}
+
+	@Override
+	public Object nullSafeGet(
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner) throws SQLException {
+		return Fizzwig.fromString(
+				StringType.INSTANCE.get( rs, names[0], sesson )
+		);
+	}
+
+	@Override
+	public void nullSafeSet(
+			PreparedStatement st,
+			Object value,
+			int index,
+			SessionImplementor session) throws SQLException {
+		final String dbValue = value == null
+				? null
+				: ( (Fizzywig) value ).asString();
+		StringType.INSTANCE.nullSafeSet( st, value, index, session );
+	}
+
+	...
+}</pre>
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">MetadataSources metadataSources = ...;
+
+metadataSources.getMetaDataBuilder()
+		.applyBasicType( FizzwigType2.KEYS, FizzwigType2.INSTANCE )
+		...</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            For additional information on developing and registering custom types, see the
+            <em class="citetitle">Hibernate Integration Guide</em>.
+        </p>
+    </div>
+
+    <div class="section" title="3.7. Mapping enums"><div class="titlepage"><div><div><h2 class="title"><a id="basic-enums"/>3.7. Mapping enums</h2></div></div></div>
+        
+
+        <p>
+            Hibernate supports the mapping of Java enums as basic value types in a number of different ways.
+        </p>
+
+        <div class="section" title="3.7.1. @Enumerated"><div class="titlepage"><div><div><h3 class="title"><a id="d5e637"/>3.7.1. @Enumerated</h3></div></div></div>
+            
+            <p>
+                The original JPA-compliant way to map enums was via the <code class="literal">@Enumerated</code>
+                and <code class="literal">@MapKeyEnumerated</code> for map keys annotations which works on the principle that
+                the enum values are stored according to one of 2 strategies indicated by
+                <code class="interfacename">javax.persistence.EnumType</code>:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p>
+                            <code class="literal">ORDINAL</code> - stored according to the enum value's ordinal position within
+                            the enum class, as indicated by java.lang.Enum#ordinal
+                        </p>
+                    </li><li class="listitem">
+                        <p>
+                            <code class="literal">STRING</code> - stored according to the enum value's name, as indicated by
+                            java.lang.Enum#name
+                        </p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e650"/><p class="title"><strong>Example 3.7. @Enumerated(ORDINAL) example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Enumerated
+	public Gender gender;
+
+	public static enum Gender {
+		MALE,
+		FEMALE
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                In the ORDINAL example, the gender column is defined as an (nullable) INTEGER type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">0</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">1</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <div class="example"><a id="d5e664"/><p class="title"><strong>Example 3.8. @Enumerated(STRING) example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Enumerated(STRING)
+	public Gender gender;
+
+	public static enum Gender {
+		MALE,
+		FEMALE
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                In the STRING example, the gender column is defined as an (nullable) VARCHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">MALE</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">FEMALE</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+        </div>
+
+        <div class="section" title="3.7.2. AttributeConverter"><div class="titlepage"><div><div><h3 class="title"><a id="d5e678"/>3.7.2. AttributeConverter</h3></div></div></div>
+            
+            <p>
+                You can also map enums in a JPA compliant way using a JPA 2.1 AttributeConverter.  Let's revisit the
+                Gender enum example, but instead we want to store the more standardized <code class="literal">'M'</code>
+                and <code class="literal">'F'</code> codes.
+            </p>
+
+            <div class="example"><a id="d5e683"/><p class="title"><strong>Example 3.9. Enum mapping with AttributeConverter example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Person {
+	...
+	@Basic
+	@Convert( converter=GenderConverter.class )
+	public Gender gender;
+}
+
+public enum Gender {
+	MALE( 'M' ),
+	FEMALE( 'F' );
+
+	private final char code;
+
+	private Gender(char code) {
+		this.code = code;
+	}
+
+	public char getCode() {
+		return code;
+	}
+
+	public static Gender fromCode(char code) {
+		if ( code == 'M' || code == 'm' ) {
+			return MALE;
+		}
+		if ( code == 'F' || code == 'f' ) {
+			return FEMALE;
+		}
+		throw ...
+	}
+}
+
+@Converter
+public class GenderConverter
+		implements AttributeConverter&lt;Character,Gender&gt; {
+
+	public Character convertToDatabaseColumn(Gender value) {
+		if ( value == null ) {
+			return null;
+		}
+
+		return value.getCode();
+	}
+
+	public Gender convertToEntityAttribute(Character value) {
+		if ( value == null ) {
+			return null;
+		}
+
+		return Gender.fromCode( value );
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Here, the gender column is defined as a CHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'M'</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'F'</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <p>
+                For additional details on using AttributeConverters, see <a class="xref" href="ch03.html#basic-jpaconvert" title="3.12. JPA 2.1 AttributeConverters">Section 3.12, “JPA 2.1 AttributeConverters”</a>.
+            </p>
+
+            <p>
+                Note that JPA explicitly disallows the use of an AttributeConverter with an attribute marked
+                as <code class="literal">@Enumerated</code>.  So if using the AttributeConverter approach, be sure to not mark the
+                attribute as <code class="literal">@Enumerated</code>.
+            </p>
+        </div>
+
+        <div class="section" title="3.7.3. Custom type"><div class="titlepage"><div><div><h3 class="title"><a id="d5e702"/>3.7.3. Custom type</h3></div></div></div>
+            
+
+            <p>
+                You can also map enums using a Hibernate custom type mapping.  Let's again revisit the Gender enum
+                example, this time using a custom Type to store the more standardized <code class="literal">'M'</code>
+                and <code class="literal">'F'</code> codes.
+            </p>
+
+            <div class="example"><a id="d5e707"/><p class="title"><strong>Example 3.10. Enum mapping with custom Type example</strong></p><div class="example-contents">
+                
+                <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">import org.hibernate.type.descriptor.java.CharacterTypeDescriptor;
+
+@Entity
+public class Person {
+	...
+	@Basic
+	@Type( type = GenderType.class )
+	public Gender gender;
+}
+
+public enum Gender {
+	MALE( 'M' ),
+	FEMALE( 'F' );
+
+	private final char code;
+
+	private Gender(char code) {
+		this.code = code;
+	}
+
+	public char getCode() {
+		return code;
+	}
+
+	public static Gender fromCode(char code) {
+		if ( code == 'M' || code == 'm' ) {
+			return MALE;
+		}
+		if ( code == 'F' || code == 'f' ) {
+			return FEMALE;
+		}
+		throw ...
+	}
+}
+
+@Converter
+public class GenderType
+		extends AbstractSingleColumnStandardBasicType&lt;Gender&gt; {
+
+	public static final GenderType INSTANCE = new GenderType();
+
+	private GenderType() {
+		super(
+				CharTypeDescriptor.INSTANCE,
+				GenderJavaTypeDescriptor.INSTANCE
+		);
+	}
+
+	public String getName() {
+		return "gender";
+	}
+
+	@Override
+	protected boolean registerUnderJavaType() {
+		return true;
+	}
+}
+
+public static class GenderJavaTypeDescriptor
+		extends AbstractTypeDescriptor&lt;Gender&gt; {
+	public static final GenderJavaTypeDescriptor INSTANCE = new GenderJavaTypeDescriptor();
+
+	public String toString(Gender value) {
+		return value == null ? null : value.name();
+	}
+
+	public Gender fromString(String string) {
+		return string == null ? null : Gender.valueOf( string );
+	}
+
+	public &lt;X&gt; X unwrap(Gender value, Class&lt;X&gt; type, WrapperOptions options) {
+		return CharacterTypeDescriptor.INSTANCE.unwrap(
+				value == null ? null : value.getCode(),
+				type,
+				options
+		);
+	}
+
+	public &lt;X&gt; Gender wrap(X value, WrapperOptions options) {
+		return CharacterTypeDescriptor.INSTANCE.wrap( value, options );
+	}
+}</pre>
+            </div></div><br class="example-break"/>
+
+            <p>
+                Again, the gender column is defined as a CHAR type and would hold:
+                </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                        <p><code class="literal">NULL</code> - null</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'M'</code> - MALE</p>
+                    </li><li class="listitem">
+                        <p><code class="literal">'F'</code> - FEMALE</p>
+                    </li></ul></div><p>
+            </p>
+
+            <p>
+                For additional details on using custom types, see <a class="xref" href="ch03.html#basic-custom" title="3.6. Custom BasicTypes">Section 3.6, “Custom BasicTypes”</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="3.8. Mapping LOBs"><div class="titlepage"><div><div><h2 class="title"><a id="basic-lob"/>3.8. Mapping LOBs</h2></div></div></div>
+        
+
+        <p>
+            Mapping LOBs (database Large OBjects) come in 2 forms, those using the JDBC locator types and those
+            <em class="firstterm">materializing</em> the LOB data.
+        </p>
+
+        <div class="sidebar" title="Locator versus materialized"><div class="titlepage"><div><div><p class="title"><strong>Locator versus materialized</strong></p></div></div></div>
+            
+            <p>
+                JDBC LOB locators exist to allow efficient access to the LOB data.  They allow the JDBC driver to
+                stream parts of the LOB data as needed, potentially freeing up memory space.  However they can be
+                unnatural to deal with and have certain limitations.  For example, a LOB locator is only portably
+                valid during the duration of the transaction in which it was obtained.
+            </p>
+            <p>
+                The idea of materialized LOBs is to trade-off the potential efficiency (not all drivers handle LOB
+                data efficiently) for a more natural programming paradigm using familiar Java types such as
+                String or byte[], etc for these LOBs.
+            </p>
+            <p>
+                Materialized deals with the entire LOB contents in memory, whereas LOB locators (in theory) allow
+                streaming parts of the LOB contents into memory as needed.
+            </p>
+        </div>
+
+        <p>
+            The JDBC LOB locator types include:
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><code class="interfacename">java.sql.Blob</code></p>
+                    <p><code class="interfacename">java.sql.Clob</code></p>
+                    <p><code class="interfacename">java.sql.NClob</code></p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            Mapping materialized forms of these LOB values would use more familiar Java types
+            such as String, char[], byte[], etc.  The trade off for "more familiar" is usually
+            performance.
+        </p>
+
+        <p>
+            For a first look lets assume we have a CLOB column that we would like to map (NCLOB character LOB data
+            will be covered in <a class="xref" href="ch03.html#basic-nationalized" title="3.9. Mapping Nationalized Character Data">Section 3.9, “Mapping Nationalized Character Data”</a>).
+        </p>
+
+        <div class="example"><a id="d5e744"/><p class="title"><strong>Example 3.11. CLOB - SQL</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table product(
+	...
+	description CLOB not null,
+	...
+)</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Let's first map this using the JDBC locator.
+        </p>
+
+        <div class="example"><a id="d5e748"/><p class="title"><strong>Example 3.12. CLOB - locator mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public Clob description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We could also map a materialized form.
+        </p>
+
+        <div class="example"><a id="d5e752"/><p class="title"><strong>Example 3.13. CLOB - materialized mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public String description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                How JDBC deals with LOB data varies from driver to driver.  Hibernate tries to handle all these variances
+                for you.  However some drivers do not allow Hibernate to always do that in an automatic fashion
+                (looking directly at you PostgreSQL JDBC drivers).  In such cases you may have to do some extra
+                to get LOBs working.  Such discussions are beyond the scope of this guide however.
+                
+            </p>
+        </div>
+
+        <p>
+            We might even want the materialized data as a char array (for some crazy reason).
+        </p>
+
+        <div class="example"><a id="d5e758"/><p class="title"><strong>Example 3.14. CLOB - materialized char[] mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	public char[] description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We'd map BLOB data in a similar fashion.
+        </p>
+
+        <div class="example"><a id="d5e762"/><p class="title"><strong>Example 3.15. BLOB - SQL</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create table step(
+	...
+	instruction BLOB not null,
+	...
+)</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            Let's first map this using the JDBC locator.
+        </p>
+
+        <div class="example"><a id="d5e766"/><p class="title"><strong>Example 3.16. BLOB - locator mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Step {
+	...
+	@Lob
+	@Basic
+	public Blob instructions;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            We could also map a materialized BLOB form.
+        </p>
+
+        <div class="example"><a id="d5e770"/><p class="title"><strong>Example 3.17. BLOB - materialized mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Step {
+	...
+	@Lob
+	@Basic
+	public byte[] instructions;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        
+    </div>
+
+    <div class="section" title="3.9. Mapping Nationalized Character Data"><div class="titlepage"><div><div><h2 class="title"><a id="basic-nationalized"/>3.9. Mapping Nationalized Character Data</h2></div></div></div>
+        
+
+        <p>
+            JDBC 4 added the ability to explicitly handle nationalized character data.  To this end
+            it added specific nationalized character data types.
+            
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">
+                    <p><code class="literal">NCHAR</code></p>
+                    <p><code class="literal">NVARCHAR</code></p>
+                    <p><code class="literal">LONGNVARCHAR</code></p>
+                    <p><code class="literal">NCLOB</code></p>
+                </li></ul></div><p>
+        </p>
+
+        <p>
+            To map a specific attribute to a nationalized variant datatype, Hibernate defines the
+            <code class="literal">@Nationalized</code> annotation.
+        </p>
+
+        <div class="example"><a id="d5e788"/><p class="title"><strong>Example 3.18. NVARCHAR mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Basic
+	@Nationalized
+	public String description;
+	...
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e791"/><p class="title"><strong>Example 3.19. NCLOB (locator) mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	@Nationalized
+	public NClob description;
+	// Clob also works, because NClob
+	// extends Clob.  The db type is
+	// still NCLOB either way and
+	// handled as such
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <div class="example"><a id="d5e794"/><p class="title"><strong>Example 3.20. NCLOB (materialized) mapping</strong></p><div class="example-contents">
+            
+            <pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@Entity
+public class Product {
+	...
+	@Lob
+	@Basic
+	@Nationalized
+	public String description;
+}</pre>
+        </div></div><br class="example-break"/>
+
+        <p>
+            If you application and database are entirely nationalized you may instead want to enable nationalized
+            character data as the default.  You can do this via the
+            <code class="literal">hibernate.use_nationalized_character_data</code> setting or by calling
+            <code class="methodname">MetadataBuilder#enableGlobalNationalizedCharacterDataSupport</code> during bootstrap.
+        </p>
+    </div>
+
+    <div class="section" title="3.10. Mapping UUID Values"><div class="titlepage"><div><div><h2 class="title"><a id="basic-uuid"/>3.10. Mapping UUID Values</h2></div></div></div>
+        
+
+        <p>
+            Hibernate also allows you to map UUID values, again in a number of ways.
+        </p>
+
+        <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Note</h2>
+            <p>
+                The default UUID mapping is as binary because it represents more efficient storage.  However
+                many applications prefer the readability of character storage.  To switch the default mapping,
+                simply call <code class="literal">MetadataBuilder.applyBasicType( UUIDCharType.INSTANCE, UUID.class.getName() )</code>
+            </p>
+        </div>
+
+        <div class="section" title="3.10.1. UUID as binary"><div class="titlepage"><div><div><h3 class="title"><a id="d5e806"/>3.10.1. UUID as binary</h3></div></div></div>
+            
+            <p>
+                As mentioned, the default mapping for UUID attributes.  Maps the UUID to a byte[]
+                using java.util.UUID#getMostSignificantBits and java.util.UUID#getLeastSignificantBits
+                and stores that as BINARY data.
+            </p>
+            <p>
+                Chosen as the default simply because it is generally more efficient from storage perspective.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.2. UUID as (var)char"><div class="titlepage"><div><div><h3 class="title"><a id="d5e810"/>3.10.2. UUID as (var)char</h3></div></div></div>
+            
+            <p>
+                Maps the UUID to a String using java.util.UUID#toString and java.util.UUID#fromString
+                and stores that as CHAR or VARCHAR data.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.3. PostgeSQL-specific UUID"><div class="titlepage"><div><div><h3 class="title"><a id="d5e813"/>3.10.3. PostgeSQL-specific UUID</h3></div></div></div>
+            
+
+            <div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><h2>Important</h2>
+                <p>When using one of the PostgreSQL Dialects, this becomes the default UUID mapping</p>
+            </div>
+
+            <p>
+                Maps the UUID using PostgreSQL's specific UUID data type.  The PostgreSQL JDBC driver choses to
+                map its UUID type to the <code class="literal">OTHER</code> code.  Note that this can cause difficulty as the
+                driver chooses to map many different data types to OTHER.
+            </p>
+        </div>
+
+        <div class="section" title="3.10.4. UUID as identifier"><div class="titlepage"><div><div><h3 class="title"><a id="d5e819"/>3.10.4. UUID as identifier</h3></div></div></div>
+            
+            <p>
+                Hibernate supports using UUID values as identifiers.  They can even be generated!  For
+                details see the discussion of generators in <a class="xref" href="ch06.html#identifiers-generators" title="6.3. Generated identifier values">Section 6.3, “Generated identifier values”</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="section" title="3.11. Mapping Date/Time Values"><div class="titlepage"><div><div><h2 class="title"><a id="basic-datetime"/>3.11. Mapping Date/Time Values</h2></div></div></div>
+        
+        <p>
+            
+            
+            blah blah blah
+        </p>
+    </div>
+
+    <div class="section" title="3.12. JPA 2.1 AttributeConverters"><div class="titlepage"><div><div><h2 class="title"><a id="basic-jpaconvert"/>3.12. JPA 2.1 AttributeConverters</h2></div></div></div>
+        
+        <p>
+            
+            blah blah blah
+        </p>
+    </div>
+
+</div><hr xmlns="" xmlns:d="http://docbook.org/ns/docbook"/><a xmlns="" xmlns:d="http://docbook.org/ns/docbook" href="legalnotice.html"/><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="ch02.html"><strong>Prev</strong>Chapter 2. Entity</a></li><li class="up"><a accesskey="u" href="#"><strong>Up</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Home</strong></a></li><li class="next"><a accesskey="n" href="ch04.html"><strong>Next</strong>Chapter 4. Compositions</a></li></ul></body></html>

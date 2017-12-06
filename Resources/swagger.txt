@@ -1,0 +1,479 @@
+swagger: "2.0"
+info:
+  description: "This is the swagger definition for the Stock Market Game API"
+  version: "1.0.0"
+  title: "Stock Market Game"
+host: "stockmarketgame.io"
+basePath: "/app"
+tags:
+- name: "user"
+  description: "Handles the user functionality"
+  
+- name: "league"
+  description: "Handles league functionality"
+  
+- name: "stocks"
+  description: "Handles stock operations"
+
+schemes:
+- "http"
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create new user"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Object with User information"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: '#/definitions/Response'
+        401:
+          description: "Bad request"
+          schema:
+            $ref: '#/definitions/Response'
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Response'
+
+  /user/login:
+    get:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "query"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "User password"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful login"
+          schema:
+            $ref: '#/definitions/Response'
+        401:
+          description: "Invalid username/password"
+          schema:
+            $ref: '#/definitions/Response'
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: '#/definitions/Response'
+
+  /user/{email}:
+    get:
+      tags:
+      - "user"
+      summary: "Fetches a user by email"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid email entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+    put:
+      tags:
+      - "user"
+      summary: "Update user"
+      consumes: 
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "JSON user object with updated info"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid email entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete a user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid email entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+
+  /league/{email}:
+    post:
+      tags:
+      - "league"
+      summary: "Creates a new league and assigns user as admin"
+      consumes: 
+      - "appliction/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "email"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "order placed for purchasing the pet"
+        required: true
+        schema:
+          $ref: '#/definitions/League'
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid email entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+    delete:
+      tags:
+      - "league"
+      summary: "League admin deletes league"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "User's email [ID]"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid email entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"  
+            
+  /league/action:
+    get:
+      tags:
+      - "league"
+      summary: "Fetch league by league ID for sreen rendering"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "leagueID"
+        description: "Specified league ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid league ID entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      tags: 
+      - "league"
+      summary: "Adds a user to a given league"
+      produces: 
+      - "application/json"
+      parameters: 
+      - in: "query"
+        name: "leagueID"
+        description: "Specified league ID"
+        required: true
+        type: "string"
+      - in: "query"
+        name: "email"
+        description: "Specified user email"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid query param entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "League and/or user not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response" 
+    put:
+      tags:
+      - "league"
+      summary: "Update league info"
+      consumes: 
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "leagueID"
+        description: "League's ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "JSON league object with updated info (i.e. name)"
+        required: true
+        schema:
+          $ref: '#/definitions/League'
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid query params entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "League not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+
+  /stock/action:
+    get:
+      tags:
+      - "stocks"
+      summary: "Gets a specified stock object"
+      produces: 
+      - "application/json"
+      parameters: 
+      - in: "query"
+        name: "ticker"
+        description: "Specified ticker name [ID]"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid ticker entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "Stock not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      tags: 
+      - "stocks"
+      summary: "Adds stock(s) to a given use's portfolio"
+      produces: 
+      - "application/json"
+      parameters: 
+      - in: "query"
+        name: "ticker"
+        description: "Specified ticker name [ID]"
+        required: true
+        type: "string"
+      - in: "query"
+        name: "shares"
+        description: "Number of shares to be added"
+        required: true
+        default: 1
+        type: "integer"
+        format: "int32"
+      - in: "query"
+        name: "email"
+        description: "User's email"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Response"
+        400:
+          description: "Bad request - invalid query param(s) entered"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "Stock and/or user not found"
+          schema:
+            $ref: "#/definitions/Response"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/Response"
+      
+definitions:
+  User:
+    type: "object"
+    required:
+      - "email"
+      - "password"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      acctID:
+        type: "string"
+      leagueID:
+        type: "string"
+      funds:
+        type: "number"
+        format: "double"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User permission level"
+      
+  League:
+    type: "object"
+    required:
+    - "leagueID"
+    properties:
+      leagueID:
+        type: "string"
+      leagueName:
+        type: "string"
+        example: "MyLeague"
+      totalValue:
+        type: "number"
+        format: "double"
+      userList:
+        type: "array"
+        items:
+          - $ref: "#/definitions/User"
+      adminList:
+        type: "array"
+        items:
+          - $ref: "#/definitions/User"
+      privateMode:
+        type: "boolean"
+        
+  Account:
+    type: "object"
+    required:
+      - "acctID"
+    properties:
+      acctID:
+        type: "string"
+  Response:
+    type: object

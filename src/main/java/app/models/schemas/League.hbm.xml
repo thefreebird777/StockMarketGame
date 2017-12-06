@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="app.models.League" table="LEAGUE" catalog="app">
+        <id name="leagueID" type="string">
+            <column name="LEAGUE_ID" />
+        </id>
+        <property name="leagueName" type="string">
+            <column name="NAME" length="25"/>
+        </property>
+        <property name="totalValue" type="double">
+            <column name="TOTAL_VAL"/>
+        </property>
+        <property name="lastName" type="string">
+            <column name="FIRST_NM" length="25"/>
+        </property>
+
+        <list name = "userList" cascade="all">
+            <key column = "EMAIL"/>
+            <list-index column = "idx"/>
+            <one-to-many class="User"/>
+        </list>
+
+        <list name = "adminList" cascade="all">
+            <key column = "EMAIL"/>
+            <list-index column = "idx"/>
+            <one-to-many class="User"/>
+        </list>
+
+        <property name="privateMode" type="boolean">
+            <column name="P_MODE"/>
+        </property>
+    </class>    
+</hibernate-mapping>
