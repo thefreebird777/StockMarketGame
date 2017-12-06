@@ -21,12 +21,14 @@ public class RuntimeHandler {
     private static final LeagueDataAccess LEAGUE_DAO = new LeagueDataAccess();
     private static final AccountDataAccess ACCT_DAO = new AccountDataAccess();
     private static StockAPIService updateService; //placeholder for auto-update service
+    private static StockService stockService; //placeholder for internal stock service
     
     /**
      * Constructor method
      */
     public RuntimeHandler() {
         try {
+            stockService = new StockService();
             updateService = new StockAPIService();
         } catch(APIException apiEx) {
             System.out.println("Critical failure: failed to create StockAPIService");
@@ -46,7 +48,10 @@ public class RuntimeHandler {
         try {
             DataAccessOperations dao = selectDAO(objClass);
             Object fetched = dao.select(obj, id);
-            return fetched;
+            if(fetched == null)
+            	throw new APIException(404, "The specified resource was not found", "");
+            else
+            	return fetched;
         } catch(APIException apiEx) {
             throw apiEx;
         }
@@ -170,9 +175,9 @@ public class RuntimeHandler {
                 return USER_DAO.saveOrUpdate(user, email); //updates user's account with new stock(s)
             } else {
                 if(checkFunds(user.getFunds(), price, quantity) == false)
-                    throw new APIException(403, "Forbidden operation - insufficient funds", "");
+                    throw new APIException(403, "Forbidden operation - insufficient funds", "RuntimeHandler::line 178");
                 else
-                    throw new APIException(403, "Forbidden operation - market closed", "");
+                    throw new APIException(403, "Forbidden operation - market closed", "RuntimeHandler::line 180");
             }  
         } catch(APIException apiEx) {
             throw apiEx;
@@ -202,7 +207,7 @@ public class RuntimeHandler {
      * @return - True/False
      */
     private synchronized boolean checkFunds(double userFunds, double price, int quantity) {
-        return ((quantity * price) > userFunds);
+        return ((quantity * price) < userFunds);
     }
     
     /**

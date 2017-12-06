@@ -9,20 +9,23 @@ public class League {
     private double totalValue;
     private ArrayList<User> userList;
     private ArrayList<User> adminList;
-    private boolean privateMode;
+    private int difficulty;
+
+	private boolean privateMode;
     
     public League() {}
     
-    public League(String leagueID, String leagueName, boolean privateMode) {
+    public League(String leagueID, String leagueName, boolean privateMode, int difficulty) {
         this.leagueID = leagueID;
         this.leagueName = leagueName;
         this.totalValue = 0.0;
         this.userList = new ArrayList<User>();
         this.adminList = new ArrayList<User>();
         this.privateMode = privateMode;
+        this.difficulty = difficulty;
     }
     
-    public League(String leagueID, String leagueName, User owner, boolean privateMode) {
+    public League(String leagueID, String leagueName, User owner, boolean privateMode, int difficulty) {
         this.leagueID = leagueID;
         this.leagueName = leagueName;
         this.totalValue = 0.0;
@@ -30,16 +33,19 @@ public class League {
         this.adminList = new ArrayList<User>();
         this.adminList.add(owner); //adds league creator to admin list
         this.privateMode = privateMode;
+        this.difficulty = difficulty;
     }
     
     public League(String leagueID, String leagueName, double leagueValue, boolean privateMode,
-            ArrayList<User> userList, ArrayList<User> adminList) {
+            ArrayList<User> userList, ArrayList<User> adminList, int difficulty) {
         this.leagueID = leagueID;
         this.leagueName = leagueName;
+        this.totalValue = 0.0;
         this.totalValue = leagueValue;
         this.userList = userList;
         this.adminList = adminList;
         this.privateMode = privateMode;
+        this.difficulty = difficulty;
     }
 
     public String getLeagueID() { return leagueID; }
@@ -54,4 +60,8 @@ public class League {
     public void setAdminList(ArrayList<User> adminList) { this.adminList = adminList; }
     public boolean isPrivateMode() { return privateMode; }
     void setPrivateMode(boolean privateMode) { this.privateMode = privateMode; }
+    public double getTotalValue() { return totalValue; }
+	public void setTotalValue(double totalValue) { this.totalValue = totalValue; }
+	public int getDifficulty() { return difficulty; }
+	public void setDifficulty(int difficulty) { this.difficulty = difficulty; }
 }

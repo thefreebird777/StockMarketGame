@@ -108,9 +108,7 @@ public class UserApi  {
     throws APIException {
         return delegate.userLoginGet(email,password,securityContext);
     }
-    @POST
-    
-    
+    @POST    
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create new user", notes = "", response = Response.class, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = { 

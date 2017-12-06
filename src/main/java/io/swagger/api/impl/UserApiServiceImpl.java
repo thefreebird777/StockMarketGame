@@ -41,8 +41,8 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response userEmailGet(String email, SecurityContext securityContext) throws APIException {    
         try {
-            User user = (User)HANDLER.select(new User(), "user", email);
-            return Response.ok().entity(GSON.toJson(user)).build();
+            User user = (User)HANDLER.select(new User(), "User", email);
+            return Response.ok().entity(user).build();
         } catch(APIException apiEx) {
             return Response.status(apiEx.getCode()).entity(apiEx).build();
         } catch (Exception e) {
@@ -98,6 +98,7 @@ public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response userPost(String json, SecurityContext securityContext) throws APIException {
         try {
+        	json = json.substring(json.indexOf("{"), json.lastIndexOf("}")+1);
             User newUser = GSON.fromJson(json, User.class);
             HANDLER.add(newUser, "User", newUser.getEmail());
             return Response.ok().build();

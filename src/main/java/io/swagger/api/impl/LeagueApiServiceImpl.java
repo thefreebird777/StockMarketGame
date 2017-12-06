@@ -45,7 +45,12 @@ public class LeagueApiServiceImpl extends LeagueApiService {
     @Override
     public Response leagueActionPost(@NotNull String leagueID, @NotNull String email, SecurityContext securityContext) throws APIException {
         try {
-            //add league user
+            League league = (League)HANDLER.select(new League(), "League", leagueID);
+            User user = (User)HANDLER.select(new User(), "User", email);
+            league.getUserList().add(user);
+            user.setLeague(league);
+            
+            HANDLER.saveOrUpdate(new User(), "User", email);
             HANDLER.saveOrUpdate(new League(), "League", leagueID);
             return Response.ok().build();
         } catch(APIException apiEx) {

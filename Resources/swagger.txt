@@ -475,3 +475,5 @@ definitions:
     properties:
       acctID:
         type: "string"
+  Response:
+    type: object
